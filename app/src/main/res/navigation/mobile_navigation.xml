@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_device">
+
+    <fragment
+        android:id="@+id/navigation_device"
+        android:name="com.ulsee.ulti_a100.ui.device.DeviceFragment"
+        android:label="@string/title_device"
+        tools:layout="@layout/fragment_device_list" />
+
+    <fragment
+        android:id="@+id/navigation_people"
+        android:name="com.ulsee.ulti_a100.ui.people.PeopleFragment"
+        android:label="@string/title_people"
+        tools:layout="@layout/fragment_people_list" />
+
+    <fragment
+        android:id="@+id/navigation_notification"
+        android:name="com.ulsee.ulti_a100.ui.record.RecordFragment"
+        android:label="@string/title_notification"
+        tools:layout="@layout/fragment_notification_list" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.ulsee.ulti_a100.ui.settings.SettingFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

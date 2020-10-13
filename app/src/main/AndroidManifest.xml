@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ulsee.ulti_a100">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name="com.ulsee.ulti_a100.App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppMaterialTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name="com.ulsee.ulti_a100.ui.device.LaunchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+<!--        <activity-->
+<!--            android:name=".ui.device.StarterActivity"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            tools:ignore="LockedOrientationActivity"></activity>-->
+        <activity
+            android:name="com.ulsee.ulti_a100.MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"></activity>
+
+    </application>
+
+</manifest>
