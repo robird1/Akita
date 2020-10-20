@@ -10,6 +10,11 @@
     <string name="next">Next</string>
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
+    <string name="retry">Retry</string>
+
+    <string name="update_successfully">Update Successful</string>
+    <string name="create_successfully">create successfully</string>
+    <string name="remove_successfully">remove successfully</string>
 
     <string name="hint_input_device_name">please enter device name</string>
     <string name="hint_device_overwrite">Device had paired, will overwrite setting</string>

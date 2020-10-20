@@ -1,9 +1,6 @@
 package com.ulsee.ulti_a100.ui.device
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,12 +15,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.textfield.TextInputLayout
 import com.ulsee.ulti_a100.MainActivity
 import com.ulsee.ulti_a100.R
-import com.ulsee.ulti_a100.data.DeviceInfoRepository
 import com.ulsee.ulti_a100.databinding.DialogAddDeviceBinding
 import com.ulsee.ulti_a100.databinding.FragmentDeviceListBinding
-import com.google.android.material.textfield.TextInputLayout
 
 private val TAG = DeviceFragment::class.java.simpleName
 private const val PORT_NUMBER = 8080
@@ -32,11 +28,6 @@ class DeviceFragment : Fragment() {
     private lateinit var binding: FragmentDeviceListBinding
     private lateinit var viewModel: DeviceListViewModel
     private var dialog: AlertDialog? = null
-    private val deviceRemovedReceiver = object: BroadcastReceiver(){
-        override fun onReceive(context: Context?, intent: Intent?) {
-            viewModel.loadDevices()
-        }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -46,7 +37,6 @@ class DeviceFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "[Enter] onCreate")
         super.onCreate(savedInstanceState)
-        context?.registerReceiver(deviceRemovedReceiver, IntentFilter("Device removed"))
     }
 
     override fun onCreateView(
@@ -57,27 +47,12 @@ class DeviceFragment : Fragment() {
         Log.d(TAG, "[Enter] onCreateView")
 
         binding = FragmentDeviceListBinding.inflate(inflater, container, false)
-
         viewModel = ViewModelProvider(this, DeviceListFactory(DeviceInfoRepository()))
             .get(DeviceListViewModel::class.java)
-        viewModel.deviceList.observe(viewLifecycleOwner, {
-            Log.d(TAG, "[Enter] viewModel.deviceList.observe")
-            Log.d(TAG, "device size: ${it.size}")
 
-            (binding.recyclerView.adapter as DeviceListAdapter).setList(it)
-        })
-        viewModel.addDeviceResult.observe(viewLifecycleOwner, { isAddSuccess ->
-            if (isAddSuccess) {
-                dialog?.dismiss()
-                viewModel.loadDevices()
-            } else {
-                dialog?.let {
-                    updateDialog(it, false)
-                    val textInputLayoutIP = it.findViewById<TextInputLayout>(R.id.text_input_ip_address)
-                    textInputLayoutIP?.error = "connection failed"
-                }
-            }
-        })
+        observeDeviceList()
+        observeAddDevice()
+        observeDeleteDevice()
 
         binding.recyclerView.adapter = DeviceListAdapter(viewModel, this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
@@ -85,9 +60,45 @@ class DeviceFragment : Fragment() {
             showAddDeviceDialog()
         }
 
-        (activity as MainActivity).title = "Device"
+        (activity as MainActivity).setTitle("Device")
 
         return binding.root
+    }
+
+    private fun observeDeviceList() {
+        viewModel.deviceList.observe(viewLifecycleOwner, {
+            Log.d(TAG, "[Enter] observeDeviceList")
+            (binding.recyclerView.adapter as DeviceListAdapter).setList(it)
+        })
+    }
+
+    private fun observeAddDevice() {
+        viewModel.addDeviceResult.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.let { isAddSuccess ->
+                Log.d(TAG, "[Enter] observeAddDevice")
+
+                if (isAddSuccess) {
+                    dialog?.dismiss()
+                    viewModel.loadDevices()
+                } else {
+                    dialog?.let { dialog ->
+                        updateDialog(dialog, false)
+                        val textInputLayoutIP =
+                            dialog.findViewById<TextInputLayout>(R.id.text_input_ip_address)
+                        textInputLayoutIP?.error = "connection failed"
+                    }
+                }
+            }
+        })
+    }
+
+    private fun observeDeleteDevice() {
+        viewModel.deleteDeviceResult.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.let {
+                Log.d(TAG, "[Enter] observeDeleteDevice")
+                viewModel.loadDevices()
+            }
+        })
     }
 
     override fun onResume() {
@@ -106,14 +117,13 @@ class DeviceFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         Log.d(TAG, "[Enter] onDestroyView")
+        super.onDestroyView()
+        viewModel.cancelAllConnectionJobs()
     }
 
     override fun onDestroy() {
         Log.d(TAG, "[Enter] onDestroy")
-
-        context?.unregisterReceiver(deviceRemovedReceiver)
         super.onDestroy()
     }
 
@@ -141,7 +151,7 @@ class DeviceFragment : Fragment() {
                 updateDialog(dialog!!, true)
                 val deviceName = binding.textInputDeviceName.editText?.text.toString()
                 val url = "http://"+binding.textInputIpAddress.editText?.text.toString()+ ":"+ PORT_NUMBER
-                Log.d(TAG, "url: $url")
+//                Log.d(TAG, "url: $url")
 
                 viewModel.addDevice(isEdit, deviceID, deviceName, url)
             }

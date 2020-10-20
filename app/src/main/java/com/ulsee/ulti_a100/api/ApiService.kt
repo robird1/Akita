@@ -16,12 +16,14 @@
 
 package com.ulsee.ulti_a100.api
 
-import com.ulsee.ulti_a100.data.response.DeviceInfo
+import com.ulsee.ulti_a100.data.response.*
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
@@ -29,6 +31,22 @@ interface ApiService {
 
     @POST("api/v1/face/getDeviceInfo")
     suspend fun requestDeviceInfo(): DeviceInfo
+
+//    @POST("api/v1/face/querySnapFace")
+//    suspend fun requestSnapshots(): Snapshot
+
+    @POST("api/v1/face/getAttendRecordCount")
+    suspend fun requestAttendRecordCount(): AttendRecordCount
+
+    @POST("api/v1/face/queryAttendRecord")
+    suspend fun requestAttendRecord(@Body params: RequestBody): AttendRecordResponse
+
+//    @POST("api/v1/face/queryAllPerson")
+//    suspend fun requestAllPerson(): AllPerson
+//
+//    @POST("api/v1/face/queryPerson")
+//    suspend fun requestPerson(@Body params: RequestBody): Person
+
 
     companion object {
         fun create(baseUrl: String): ApiService {

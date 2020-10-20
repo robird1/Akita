@@ -9,7 +9,11 @@
         android:id="@+id/navigation_device"
         android:name="com.ulsee.ulti_a100.ui.device.DeviceFragment"
         android:label="@string/title_device"
-        tools:layout="@layout/fragment_device_list" />
+        tools:layout="@layout/fragment_device_list" >
+        <action
+            android:id="@+id/action_to_device_info"
+            app:destination="@id/device_info" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_people"
@@ -18,14 +22,42 @@
         tools:layout="@layout/fragment_people_list" />
 
     <fragment
-        android:id="@+id/navigation_notification"
-        android:name="com.ulsee.ulti_a100.ui.record.RecordFragment"
+        android:id="@+id/navigation_record"
+        android:name="com.ulsee.ulti_a100.ui.record.DeviceFragment"
         android:label="@string/title_notification"
-        tools:layout="@layout/fragment_notification_list" />
+        tools:layout="@layout/fragment_notification_list" >
+        <action
+            android:id="@+id/action_to_attend_record"
+            app:destination="@id/navigation_attend_record" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.ulsee.ulti_a100.ui.settings.SettingFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/device_info"
+        android:name="com.ulsee.ulti_a100.ui.device.DeviceInfoFragment"
+        android:label="Device Information"
+        tools:layout="@layout/fragment_device_info" >
+        <argument
+            android:name="recordID"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_attend_record"
+        android:name="com.ulsee.ulti_a100.ui.record.AttendRecordFragment"
+        android:label="Attend Record"
+        tools:layout="@layout/fragment_attend_records" >
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+
 </navigation>

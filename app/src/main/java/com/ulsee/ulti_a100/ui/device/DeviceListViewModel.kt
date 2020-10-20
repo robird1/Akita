@@ -2,9 +2,8 @@ package com.ulsee.ulti_a100.ui.device
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.ulsee.ulti_a100.data.DeviceInfoRepository
+import com.ulsee.ulti_a100.utils.Event
 import com.ulsee.ulti_a100.data.response.DeviceInfo
-import com.ulsee.ulti_a100.data.response.Info
 import com.ulsee.ulti_a100.model.Device
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -12,29 +11,41 @@ import kotlinx.coroutines.launch
 
 private val TAG = DeviceListViewModel::class.java.simpleName
 
-class DeviceListViewModel(repository: DeviceInfoRepository) : DeviceInfoViewModel(repository) {
+class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewModel() {
     private var _deviceList = MutableLiveData<List<Device>>()
     val deviceList : LiveData<List<Device>>
         get() = _deviceList
     private val jobList = ArrayList<Job>()
 
-    private var _addDeviceResult = MutableLiveData<Boolean>()
-    val addDeviceResult : LiveData<Boolean>
+    private var _addDeviceResult = MutableLiveData<Event<Boolean>>()
+    val addDeviceResult : LiveData<Event<Boolean>>
         get() = _addDeviceResult
     private var addDeviceJob: Job? = null
+
+    private var _deleteDeviceResult = MutableLiveData<Event<Boolean>>()
+    val deleteDeviceResult : LiveData<Event<Boolean>>
+        get() = _deleteDeviceResult
+
 
     init {
         Log.d(TAG, "[Enter] init()")
         loadDevices()
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "[Enter] onCleared()")
+    }
+
     fun loadDevices() {
         Log.d(TAG, "[Enter] loadDevices()")
         cancelAllConnectionJobs()
-        _deviceList.value = repository.loadDevices()
+        viewModelScope.launch {
+            _deviceList.value = repository.loadDevices()
+        }
     }
 
-    private fun cancelAllConnectionJobs() {
+    fun cancelAllConnectionJobs() {
         for (j in jobList) {
             j.cancel()
         }
@@ -68,34 +79,29 @@ class DeviceListViewModel(repository: DeviceInfoRepository) : DeviceInfoViewMode
 
     fun addDevice(isEdit: Boolean, deviceID: String, inputName: String, url: String) {
         addDeviceJob = viewModelScope.launch  {
-            var isConnected: Boolean
             try {
                 val deviceInfo = repository.requestDeviceInfo(url)
-                isConnected = isDeviceOnline(deviceInfo)
-                if (isConnected) {
+                if (isDeviceOnline(deviceInfo)) {
                     if (!isEdit) {
-                        saveDeviceInfo(deviceInfo.data, inputName, url, _addDeviceResult)
+                        repository.addDevice(deviceInfo.data, inputName, url)
                     } else {
-                        editDeviceInfo(deviceID, inputName, url, _addDeviceResult)
+                        repository.editDevice(deviceID, inputName, url)
                     }
+                    _addDeviceResult.value = Event(true)
                 } else {
-                    _addDeviceResult.value = false
+                    _addDeviceResult.value = Event(false)
                 }
             } catch (e: Exception) {
-                isConnected = false
-                _addDeviceResult.value = false
+                _addDeviceResult.value = Event(false)
             }
-
-            Log.d(TAG, "isConnected: $isConnected")
         }
     }
 
-    private fun saveDeviceInfo(info: Info, deviceName: String, url: String, liveDataResult: MutableLiveData<Boolean>) {
-        repository.addDevice(info, deviceName, url, liveDataResult)
-    }
-
-    private fun editDeviceInfo(deviceID: String, deviceName: String, url: String, liveDataResult: MutableLiveData<Boolean>) {
-        repository.editDevice(deviceID, deviceName, url, liveDataResult)
+    fun deleteDevice(deviceID: String) {
+        viewModelScope.launch {
+            repository.deleteDevice(deviceID)
+            _deleteDeviceResult.value = Event(true)
+        }
     }
 
     private fun isDeviceOnline(deviceInfo: DeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"

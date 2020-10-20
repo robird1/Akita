@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.model.Device
@@ -42,7 +43,7 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
     private val nameTV = itemView.findViewById<TextView>(R.id.textView_deviceName)
     private val hintTV = itemView.findViewById<TextView>(R.id.textView_hint)
     private val connectedView = itemView.findViewById<View>(R.id.view_connected)
-    private val notConnectedView = itemView.findViewById<View>(R.id.view_not_connected)
+    private val notConnectedView = itemView.findViewById<View>(R.id.view_connection_status)
     private var mPopup: PopupMenu
     var device: Device? = null
     private var deviceID = ""
@@ -51,14 +52,14 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
         Log.d(TAG, "[Enter] init in ViewHolder")
         val menuLayout = itemView.findViewById<View>(R.id.layout_menu)
         mPopup = PopupMenu(itemView.context, menuLayout)
-        mPopup.menu.add("a").setTitle("Edit Device Name / IP")
+        mPopup.menu.add("a").setTitle("Edit Device Info")
         mPopup.menu.add("b").setTitle("Device Setting")
-        mPopup.menu.add("c").setTitle("Show Device Info and Status")
+        mPopup.menu.add("c").setTitle("Device Info")
         mPopup.menu.add("d").setTitle("Remove")
 
         mPopup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.title) {
-                "Edit Device Name / IP" -> {
+                "Edit Device Info" -> {
                     fragment.showAddDeviceDialog(true, deviceID)
                 }
                 "Device Setting" -> {
@@ -66,10 +67,10 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
 //                        intent.putExtra("device", deviceID)
 //                        itemView.context.startActivity(intent)
                 }
-                "Show Device Info and Status" -> {
-//                        val intent = Intent(itemView.context, WIFIListActivity::class.java)
-//                        intent.putExtra("device", deviceID)
-//                        itemView.context.startActivity(intent)
+                "Device Info" -> {
+                    val action = DeviceFragmentDirections.actionToDeviceInfo(deviceID)
+                    fragment.findNavController().navigate(action)
+
                 }
                 "Remove" -> {
                     AlertDialog.Builder(itemView.context)
@@ -77,7 +78,7 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
                         .setPositiveButton(
                             itemView.context.getString(R.string.remove)
                         ) { _, _ ->
-                            viewModel.repository.deleteDevice(itemView.context, deviceID)
+                            viewModel.deleteDevice(deviceID)
                         }
                         .setNegativeButton(
                             "Cancel"
