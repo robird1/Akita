@@ -1,6 +1,8 @@
 package com.ulsee.ulti_a100.ui.device
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -12,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.model.Device
+import com.ulsee.ulti_a100.ui.streaming.VlcRtspActivity
 
 private val TAG = DeviceListAdapter::class.java.simpleName
 
@@ -100,7 +103,11 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
 
         val thumbLayout = itemView.findViewById<View>(R.id.layout_thumb)
         thumbLayout.setOnClickListener {
-
+            val uri = Uri.parse(device?.getIP())
+            val url = "rtsp://${uri.host}"
+            val intent = Intent(fragment.context, VlcRtspActivity::class.java)
+            intent.putExtra(VlcRtspActivity.RTSP_URL, url)
+            fragment.startActivity(intent)
         }
     }
 
