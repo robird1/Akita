@@ -6,24 +6,48 @@
     android:layout_height="100dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/face_img"
+<!--    <ImageView-->
+<!--        android:id="@+id/face_img"-->
+<!--        android:layout_width="80dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        app:layout_constraintDimensionRatio="1"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
+    <FrameLayout
+        android:id="@+id/face_frame"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_margin="10dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintDimensionRatio="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/face_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/face_select"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:src="@drawable/ic_select_blue"-->
+<!--            android:visibility="invisible" />-->
+    </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="80dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/face_img"
+        app:layout_constraintEnd_toStartOf="@+id/face_select"
+        app:layout_constraintStart_toEndOf="@+id/face_frame"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -34,16 +58,17 @@
 
             <TextView
                 android:id="@+id/textView3"
-                android:layout_width="90dp"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
                 android:text="Name: " />
 
             <TextView
-                android:id="@+id/textView_name"
+                android:id="@+id/textView_language"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:ellipsize="marquee"
-                android:gravity="bottom"
+                android:gravity="center|start"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
                 android:textSize="16sp" />
@@ -57,16 +82,17 @@
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="90dp"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
                 android:text="Work ID:" />
 
             <TextView
                 android:id="@+id/textView_workID"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:ellipsize="marquee"
-                android:gravity="top"
+                android:gravity="center|start"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
                 android:textSize="14sp" />
@@ -74,5 +100,18 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/face_select"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_select_blue"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

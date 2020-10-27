@@ -1,6 +1,6 @@
 package com.ulsee.ulti_a100.data.response
 
-data class AttendRecordCount(
+data class GetAttendRecordCount(
     val command: Int,
     val detail: String,
     val startId: Int,
@@ -9,7 +9,7 @@ data class AttendRecordCount(
     val transmit_cast: Int
 )
 
-data class AttendRecordResponse(
+data class QueryAttendRecord(
     val command: Int,
     val data: List<AttendRecord>,
     val detail: String,

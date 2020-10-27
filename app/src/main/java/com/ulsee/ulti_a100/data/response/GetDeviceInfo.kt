@@ -2,7 +2,7 @@ package com.ulsee.ulti_a100.data.response
 
 import com.google.gson.annotations.SerializedName
 
-data class DeviceInfo(
+data class GetDeviceInfo(
     @field:SerializedName("status") val status: Int,
     @field:SerializedName("detail") val detail: String,
     @field:SerializedName("data") val data: Info)

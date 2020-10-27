@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.ulsee.ulti_a100.data.response.AttendRecord
-import com.ulsee.ulti_a100.data.response.AttendRecordCount
+import com.ulsee.ulti_a100.data.response.GetAttendRecordCount
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -56,7 +56,7 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
         }
     }
 
-    private fun isQuerySuccess(response: AttendRecordCount) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: GetAttendRecordCount) = response.status == 0 && response.detail == "success"
 
 }
 

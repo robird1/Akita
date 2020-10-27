@@ -77,4 +77,12 @@ open class RealmPeople : RealmObject() {
         return mAddress
     }
 
+    private var mCreatedAt: Long = 0
+    fun setCreatedAt(value: Long) {
+        mCreatedAt = value
+    }
+    fun getCreatedAt(): Long {
+        return mCreatedAt
+    }
+
 }

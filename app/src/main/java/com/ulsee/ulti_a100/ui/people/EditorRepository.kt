@@ -10,7 +10,6 @@ private val TAG = EditorRepository::class.java.simpleName
 
 class EditorRepository {
     suspend fun addPeople(p: People): Boolean = withContext(Dispatchers.IO) {
-//        Log.d(TAG, "[Enter] addPeople")
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         val people: RealmPeople = realm.createObject(RealmPeople::class.java)
@@ -23,14 +22,13 @@ class EditorRepository {
         people.setAge(p.getAge())
         people.setPhone(p.getPhone())
         people.setAddress(p.getAddress())
+        people.setCreatedAt(System.currentTimeMillis())
         realm.commitTransaction()
+        realm.close()
         return@withContext true
     }
 
     suspend fun editPeople(p: People): Boolean = withContext(Dispatchers.IO) {
-//        Log.d(TAG, "[Enter] editPeople")
-//        Log.d(TAG, "[Enter] p.getID: ${p.getID()}")
-
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         val people = realm.where(RealmPeople::class.java).equalTo("id", p.getID()).findFirst()!!
@@ -42,7 +40,9 @@ class EditorRepository {
         people.setAge(p.getAge())
         people.setPhone(p.getPhone())
         people.setAddress(p.getAddress())
+        people.setCreatedAt(System.currentTimeMillis())
         realm.commitTransaction()
+        realm.close()
         return@withContext true
     }
 

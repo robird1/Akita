@@ -13,6 +13,10 @@
         <action
             android:id="@+id/action_to_device_info"
             app:destination="@id/device_info" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings" />
+
     </fragment>
 
     <fragment
@@ -28,7 +32,7 @@
         tools:layout="@layout/fragment_notification_list" >
         <action
             android:id="@+id/action_to_attend_record"
-            app:destination="@id/navigation_attend_record" />
+            app:destination="@id/attend_record" />
     </fragment>
 
     <fragment
@@ -49,7 +53,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_attend_record"
+        android:id="@+id/attend_record"
         android:name="com.ulsee.ulti_a100.ui.record.AttendRecordFragment"
         android:label="Attend Record"
         tools:layout="@layout/fragment_attend_records" >
@@ -59,5 +63,134 @@
             app:argType="string" />
     </fragment>
 
+    <fragment
+        android:id="@+id/device_settings"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.SettingFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_device_setting" >
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_to_language_config"
+            app:destination="@id/language_config" />
+        <action
+            android:id="@+id/action_to_temperature_config"
+            app:destination="@id/temperature_config" />
+        <action
+            android:id="@+id/action_to_panel_ui_config"
+            app:destination="@id/panel_ui_config" />
+        <action
+            android:id="@+id/action_to_others_config"
+            app:destination="@id/others_config" />
+        <action
+            android:id="@+id/action_to_light_config"
+            app:destination="@id/light_mode_config" />
+        <action
+            android:id="@+id/action_to_volume_config"
+            app:destination="@id/volume_config" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/language_config"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.LanguageFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_language_config">
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="language"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/temperature_config"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.TemperatureFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_language_config">
+        <argument
+            android:name="temperature"
+            app:argType="com.ulsee.ulti_a100.ui.device.settings.TemperatureData" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/panel_ui_config"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.PanelUIFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_panel_ui_config">
+        <argument
+            android:name="panel_ui"
+            app:argType="com.ulsee.ulti_a100.ui.device.settings.PanelUIData" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/others_config"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.OthersConfigFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_others_config">
+        <argument
+            android:name="others_config"
+            app:argType="com.ulsee.ulti_a100.ui.device.settings.OthersConfigData" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/light_mode_config"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.LightModeFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_light_mode">
+        <argument
+            android:name="light_mode"
+            app:argType="com.ulsee.ulti_a100.ui.device.settings.LightModeData" />
+
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/volume_config"
+        android:name="com.ulsee.ulti_a100.ui.device.settings.VolumeFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_volume_config">
+        <argument
+            android:name="volume"
+            app:argType="integer" />
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
 
 </navigation>
