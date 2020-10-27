@@ -1,14 +1,23 @@
 package com.ulsee.ulti_a100.data.response
 
-data class Person(
+data class QueryPerson(
+    val command: Int,
+    val `data`: Data,
+    val detail: String,
+    val status: Int,
+    val transmit_cast: Int
+)
+
+data class Data(
     val accessInfo: AccessInfo,
+    val address: String,
     val age: Int,
     val certificateNumber: String,
     val certificateType: Int,
     val email: String,
+    val faces: List<Face>,
     val gender: String,
     val groupId: String,
-    val images: List<Image>,
     val name: String,
     val personId: String,
     val phone: String,
@@ -16,14 +25,14 @@ data class Person(
     val userId: String
 )
 
-data class AccessInfoPerson(
+data class AccessInfo(
     val authType: Int,
     val cardNum: String,
     val password: String,
     val roleType: Int
 )
 
-data class Image(
+data class Face(
     val faceId: String,
     val orgimg: String
 )

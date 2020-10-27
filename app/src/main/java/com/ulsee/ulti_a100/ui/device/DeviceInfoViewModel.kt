@@ -2,6 +2,7 @@ package com.ulsee.ulti_a100.ui.device
 
 import androidx.lifecycle.*
 import com.ulsee.ulti_a100.model.Device
+import io.realm.Realm
 import kotlinx.coroutines.launch
 
 class DeviceInfoViewModel(private val repository: DeviceInfoRepository, private val deviceID: String) : ViewModel() {
@@ -15,7 +16,11 @@ class DeviceInfoViewModel(private val repository: DeviceInfoRepository, private 
 
     private fun getDeviceInfo() {
         viewModelScope.launch {
-            _deviceInfo.value = repository.queryDevice(deviceID)
+            try {
+                _deviceInfo.value = repository.queryDevice(deviceID)
+            } catch (e: Exception) {
+
+            }
         }
     }
 }

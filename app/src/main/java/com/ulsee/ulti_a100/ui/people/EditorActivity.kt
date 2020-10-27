@@ -9,7 +9,6 @@ import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Base64
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -65,17 +64,16 @@ class EditorActivity: AppCompatActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d(TAG, "[Enter] onActivityResult")
+//        Log.d(TAG, "[Enter] onActivityResult")
         if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
                 val file = FilePickerHelper.shared().putPickedFile(this, takePhotoIntentUri)
-
                 val bm = BitmapFactory.decodeFile(file.path)
                 val bOut = ByteArrayOutputStream()
                 bm.compress(Bitmap.CompressFormat.JPEG, 100, bOut)
                 val imageBase64 = Base64.encodeToString(
                     bOut.toByteArray(),
-                    Base64.DEFAULT
+                    Base64.NO_WRAP
                 )
                 mImageBase64 = imageBase64
                 binding.addImage.setImageBitmap(bm)
@@ -121,7 +119,8 @@ class EditorActivity: AppCompatActivity() {
         takePhotoIntentUri = FileProvider.getUriForFile(
             this,
             "$packageName.fileprovider",
-            image)
+            image
+        )
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, takePhotoIntentUri)
         startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO)
     }

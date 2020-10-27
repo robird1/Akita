@@ -26,12 +26,12 @@ class DeviceListAdapter(private val viewModel: DeviceListViewModel, private val 
     override fun getItemCount(): Int = this.deviceList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d(TAG, "[Enter] onBindViewHolder position: $position")
+//        Log.d(TAG, "[Enter] onBindViewHolder position: $position")
         holder.bind(deviceList[position], position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d(TAG, "[Enter] onCreateViewHolder")
+//        Log.d(TAG, "[Enter] onCreateViewHolder")
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_list_device, parent, false)
         return ViewHolder(view, viewModel, fragment)
@@ -47,6 +47,7 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
     private var mPopup: PopupMenu
     var device: Device? = null
     private var deviceID = ""
+    private var deviceIP = ""
 
     init {
         Log.d(TAG, "[Enter] init in ViewHolder")
@@ -63,9 +64,8 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
                     fragment.showAddDeviceDialog(true, deviceID)
                 }
                 "Device Setting" -> {
-//                        val intent = Intent(itemView.context, SettingsActivity::class.java)
-//                        intent.putExtra("device", deviceID)
-//                        itemView.context.startActivity(intent)
+                    val action = DeviceFragmentDirections.actionToDeviceSettings(deviceIP)
+                    fragment.findNavController().navigate(action)
                 }
                 "Device Info" -> {
                     val action = DeviceFragmentDirections.actionToDeviceInfo(deviceID)
@@ -107,6 +107,7 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
     fun bind(device: Device, position: Int) {
         this.device = device
         deviceID = device.getID()
+        deviceIP = device.getIP()
         nameTV?.text = device.getID()
 
         viewModel.getConnectionStatus(device.getIP(), position, this)

@@ -5,17 +5,17 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.ulsee.ulti_a100.api.ApiService
 import com.ulsee.ulti_a100.data.response.AttendRecord
-import com.ulsee.ulti_a100.data.response.AttendRecordCount
-import com.ulsee.ulti_a100.data.response.AttendRecordResponse
+import com.ulsee.ulti_a100.data.response.GetAttendRecordCount
+import com.ulsee.ulti_a100.data.response.QueryAttendRecord
 import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 
 class AttendRecordRepository(private val url: String) {
-    suspend fun requestAttendRecordCount(): AttendRecordCount {
+    suspend fun requestAttendRecordCount(): GetAttendRecordCount {
         return ApiService.create(url).requestAttendRecordCount()
     }
 
-    suspend fun requestAttendRecord(requestBody: RequestBody): AttendRecordResponse {
+    suspend fun requestAttendRecord(requestBody: RequestBody): QueryAttendRecord {
         return ApiService.create(url).requestAttendRecord(requestBody)
     }
 

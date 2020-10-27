@@ -3,7 +3,7 @@ package com.ulsee.ulti_a100.ui.record
 import android.util.Log
 import androidx.lifecycle.*
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
-import com.ulsee.ulti_a100.data.response.DeviceInfo
+import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.model.Device
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -63,11 +63,11 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
         jobList.add(job)
     }
 
-    private fun isDeviceOnline(deviceInfo: DeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
+    private fun isDeviceOnline(deviceInfo: GetDeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
 
 }
 
-class RecordListFactory(private val repository: DeviceInfoRepository) : ViewModelProvider.Factory {
+class DeviceListFactory(private val repository: DeviceInfoRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DeviceListViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

@@ -11,6 +11,8 @@
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
     <string name="retry">Retry</string>
+    <string name="sync">Sync</string>
+    <string name="apply">Apply</string>
 
     <string name="update_successfully">Update Successful</string>
     <string name="create_successfully">create successfully</string>
@@ -25,6 +27,25 @@
     <string name="confirm_remove_device">Confirm Device Removal?</string>
     <string name="dialog_add_device">Add Device</string>
     <string name="dialog_connect_hotspot">Connect to Hotspot...</string>
+
+    <string name="msg_file_selected">%1$d file selected</string>
+    <string name="msg_files_selected">%1$d files selected</string>
+    <string name="no_item_selected">No item selected</string>
+    <string name="confirm_face_sync">Confirm face sync?</string>
+
+    <string name="language_en">English</string>
+    <string name="language_sc">SimplifiedChinese</string>
+    <string name="language_tc">TraditionalChinese</string>
+    <string name="language_jp">Japanese</string>
+    <string name="language_ko">Korean</string>
+    <string name="language_ru">Russian</string>
+    <string name="language_it">Italian</string>
+    <string name="language_es">Spanish</string>
+    <string name="language_de">German</string>
+    <string name="language_fr">French</string>
+    <string name="language_pt">Portuguese</string>
+    <string name="language_tu">Turkish</string>
+    <string name="language_pl">Polish</string>
 
 
 </resources>

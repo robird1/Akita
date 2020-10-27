@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/apply_btn"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/apply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/apply_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/checkBox_ip"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show IP" />
+
+            <CheckBox
+                android:id="@+id/checkBox_mac"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show MAC" />
+
+            <CheckBox
+                android:id="@+id/checkBox_frame"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Tracking Frame" />
+
+            <CheckBox
+                android:id="@+id/checkBox_registration"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Number of Registration" />
+
+            <CheckBox
+                android:id="@+id/checkBox_recognize_area"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Recognize Area" />
+
+            <CheckBox
+                android:id="@+id/checkBox_recognize_result"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Recognize Result" />
+
+            <CheckBox
+                android:id="@+id/checkBox_temperature"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Body Temperature" />
+        </LinearLayout>
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

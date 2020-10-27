@@ -13,13 +13,13 @@
         android:visibility="invisible" />
 
     <FrameLayout
-        android:id="@+id/listitem_file_manage_icon_layout"
+        android:id="@+id/frame_device_icon"
         android:layout_width="80dp"
         android:layout_height="72dp"
         android:padding="8dp">
 
         <ImageView
-            android:id="@+id/listitem_file_manage_icon"
+            android:id="@+id/device_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -28,7 +28,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/listitem_file_manage_info_layout"
+        android:id="@+id/frame_connect_status"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_alignParentRight="true">
@@ -52,8 +52,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:layout_toLeftOf="@+id/listitem_file_manage_info_layout"
-        android:layout_toRightOf="@+id/listitem_file_manage_icon_layout"
+        android:layout_toLeftOf="@+id/frame_connect_status"
+        android:layout_toRightOf="@+id/frame_device_icon"
         android:orientation="vertical">
 
         <TextView
@@ -81,7 +81,7 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/listitem_file_manage_divider"
+        android:id="@+id/item_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"

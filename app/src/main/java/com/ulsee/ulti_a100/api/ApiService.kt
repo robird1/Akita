@@ -30,22 +30,31 @@ import java.util.concurrent.TimeUnit
 interface ApiService {
 
     @POST("api/v1/face/getDeviceInfo")
-    suspend fun requestDeviceInfo(): DeviceInfo
+    suspend fun requestDeviceInfo(): GetDeviceInfo
 
 //    @POST("api/v1/face/querySnapFace")
 //    suspend fun requestSnapshots(): Snapshot
 
     @POST("api/v1/face/getAttendRecordCount")
-    suspend fun requestAttendRecordCount(): AttendRecordCount
+    suspend fun requestAttendRecordCount(): GetAttendRecordCount
 
     @POST("api/v1/face/queryAttendRecord")
-    suspend fun requestAttendRecord(@Body params: RequestBody): AttendRecordResponse
+    suspend fun requestAttendRecord(@Body params: RequestBody): QueryAttendRecord
 
 //    @POST("api/v1/face/queryAllPerson")
 //    suspend fun requestAllPerson(): AllPerson
-//
-//    @POST("api/v1/face/queryPerson")
-//    suspend fun requestPerson(@Body params: RequestBody): Person
+
+    @POST("api/v1/face/queryPerson")
+    suspend fun requestPerson(@Body params: RequestBody): QueryPerson
+
+    @POST("api/v1/face/addPerson")
+    suspend fun requestAddPerson(@Body params: RequestBody): AddPerson
+
+    @POST("api/v1/face/getUIConfig")
+    suspend fun getDeviceConfig(): getUIConfig
+
+    @POST("api/v1/face/setUIConfig")
+    suspend fun setDeviceConfig(@Body params: RequestBody): SetUIConfig
 
 
     companion object {

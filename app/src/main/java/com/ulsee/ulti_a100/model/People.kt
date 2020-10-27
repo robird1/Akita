@@ -2,6 +2,7 @@ package com.ulsee.ulti_a100.model
 
 open class People {
 
+    // record ID of phone DB
     private var id = 0
     fun setID(value: Int) {
         id = value
@@ -74,6 +75,17 @@ open class People {
         return mAddress
     }
 
+    // for record sorting of phone DB
+    private var mCreatedAt: Long = 0
+    fun setCreatedAt(value: Long) {
+        mCreatedAt = value
+    }
+    fun getCreatedAt(): Long {
+        return mCreatedAt
+    }
+
+    var checked = false
+
     companion object {
         fun clone (realmPeople: RealmPeople) : People {
             val people = People()
@@ -86,6 +98,7 @@ open class People {
             people.setAge(realmPeople.getAge())
             people.setPhone(realmPeople.getPhone())
             people.setAddress(realmPeople.getAddress())
+            people.setCreatedAt(realmPeople.getCreatedAt())
             return people
         }
     }

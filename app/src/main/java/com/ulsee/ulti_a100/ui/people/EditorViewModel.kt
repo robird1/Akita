@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.ulsee.ulti_a100.model.People
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 private val TAG = EditorViewModel::class.java.simpleName
 

@@ -26,7 +26,7 @@ class DeviceFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentRecordDeviceListBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this, RecordListFactory(DeviceInfoRepository()))
+        viewModel = ViewModelProvider(this, DeviceListFactory(DeviceInfoRepository()))
             .get(DeviceListViewModel::class.java)
 
         observeDeviceList()

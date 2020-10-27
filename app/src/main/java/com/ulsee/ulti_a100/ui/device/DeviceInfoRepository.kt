@@ -1,7 +1,7 @@
 package com.ulsee.ulti_a100.ui.device
 
 import com.ulsee.ulti_a100.api.ApiService
-import com.ulsee.ulti_a100.data.response.DeviceInfo
+import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.data.response.Info
 import com.ulsee.ulti_a100.model.Device
 import com.ulsee.ulti_a100.model.RealmDevice
@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 class DeviceInfoRepository {
 
-    suspend fun requestDeviceInfo(baseUrl: String): DeviceInfo {
+    suspend fun requestDeviceInfo(baseUrl: String): GetDeviceInfo {
         return ApiService.create(baseUrl).requestDeviceInfo()
     }
 
@@ -26,6 +26,7 @@ class DeviceInfoRepository {
         device.setMAC(info.mac)
         device.setChipID(info.chipid)
         realm.commitTransaction()
+        realm.close()
     }
 
     suspend fun editDevice(deviceID: String, deviceName: String, url:String) = withContext(Dispatchers.IO) {
@@ -35,6 +36,7 @@ class DeviceInfoRepository {
         device.setID(deviceName)
         device.setIP(url)
         realm.commitTransaction()
+        realm.close()
     }
 
     suspend fun queryDevice(deviceID: String): Device = withContext(Dispatchers.IO) {
@@ -42,6 +44,7 @@ class DeviceInfoRepository {
         realm.beginTransaction()
         val device = realm.where(RealmDevice::class.java).equalTo("mID", deviceID).findFirst()!!
         realm.commitTransaction()
+        realm.close()
         return@withContext Device.clone(device)
     }
 
@@ -52,6 +55,7 @@ class DeviceInfoRepository {
             .equalTo("mID", deviceID).findAll()
         rows.deleteAllFromRealm()
         realm.commitTransaction()
+        realm.close()
     }
 
     suspend fun loadDevices(): List<Device> = withContext(Dispatchers.IO) {
@@ -62,6 +66,7 @@ class DeviceInfoRepository {
             val device = Device.clone(realmDevice)
             deviceList.add(device)
         }
+        realm.close()
         return@withContext deviceList
     }
 

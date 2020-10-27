@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/my_search"
+        android:title="Search"
+        android:icon="@drawable/ic_toolbar_search_gray"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="com.ulsee.ulti_a100.ui.people.PeopleSearchView" />
+
+<!--    <item-->
+<!--        android:id="@+id/editor_action_more"-->
+<!--        android:icon="@drawable/outline_more_vert_24"-->
+<!--        android:title="more"-->
+<!--        app:showAsAction="always">-->
+
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/select_file_to_sync"-->
+<!--                android:title="sync face"-->
+<!--                app:showAsAction="never" />-->
+<!--        </menu>-->
+
+<!--    </item>-->
+    <item android:id="@+id/sync"
+        android:title="Sync files to devices"
+        android:icon="@drawable/baseline_sync_24"
+        app:showAsAction="always|collapseActionView" />
+
+
+
+</menu>
