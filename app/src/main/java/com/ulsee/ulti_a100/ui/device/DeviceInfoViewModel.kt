@@ -1,9 +1,12 @@
 package com.ulsee.ulti_a100.ui.device
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.ulsee.ulti_a100.model.Device
 import io.realm.Realm
 import kotlinx.coroutines.launch
+
+private val TAG = DeviceInfoViewModel::class.java.simpleName
 
 class DeviceInfoViewModel(private val repository: DeviceInfoRepository, private val deviceID: String) : ViewModel() {
     private var _deviceInfo = MutableLiveData<Device>()
@@ -19,7 +22,7 @@ class DeviceInfoViewModel(private val repository: DeviceInfoRepository, private 
             try {
                 _deviceInfo.value = repository.queryDevice(deviceID)
             } catch (e: Exception) {
-
+                Log.d(TAG, "[Enter] Exception e.message: ${e.message}")
             }
         }
     }

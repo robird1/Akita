@@ -10,6 +10,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val TAG = DeviceListViewModel::class.java.simpleName
+const val ERROR_CODE_NAME_EXISTS = 1000
+const val ERROR_CODE_DEVICE_PAIRED = 1001
+const val ERROR_CODE_CONNECTION_FAILED = 1002
 
 class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewModel() {
     private var _deviceList = MutableLiveData<List<Device>>()
@@ -21,6 +24,9 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
     val addDeviceResult : LiveData<Event<Boolean>>
         get() = _addDeviceResult
     private var addDeviceJob: Job? = null
+    private var _addDeviceErrorCode = -1
+    val addDeviceErrorCode: Int
+        get() = _addDeviceErrorCode
 
     private var _deleteDeviceResult = MutableLiveData<Event<Boolean>>()
     val deleteDeviceResult : LiveData<Event<Boolean>>
@@ -56,6 +62,10 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
         addDeviceJob?.cancel()
     }
 
+    fun resetAddDeviceErrorCode() {
+        _addDeviceErrorCode = -1
+    }
+
     fun getConnectionStatus(url: String, position: Int, viewHolder: ViewHolder) {
         val job = viewModelScope.launch  {
             while(true) {
@@ -71,7 +81,7 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
                 Log.d(TAG, "isConnected: $isConnected position: $position")
 
                 viewHolder.displayConnectionStatus(isConnected)
-                delay(5000)
+                delay(3000)
             }
         }
         jobList.add(job)
@@ -82,19 +92,52 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
             try {
                 val deviceInfo = repository.requestDeviceInfo(url)
                 if (isDeviceOnline(deviceInfo)) {
+
                     if (!isEdit) {
-                        repository.addDevice(deviceInfo.data, inputName, url)
+                        if (!isNameDuplicate(inputName) && !isDevicePaired(deviceInfo)) {
+                            repository.addDevice(deviceInfo.data, inputName, url)
+                            _addDeviceResult.value = Event(true)
+                        }
                     } else {
-                        repository.editDevice(deviceID, inputName, url)
+                        if (isEditNameValid(inputName, deviceID) && isEditDeviceNotPaired(deviceID, deviceInfo)) {
+                            repository.editDevice(deviceID, inputName, url)
+                            _addDeviceResult.value = Event(true)
+                        }
                     }
-                    _addDeviceResult.value = Event(true)
+
                 } else {
+                    _addDeviceErrorCode = ERROR_CODE_CONNECTION_FAILED
                     _addDeviceResult.value = Event(false)
                 }
+
             } catch (e: Exception) {
+                _addDeviceErrorCode = ERROR_CODE_CONNECTION_FAILED
                 _addDeviceResult.value = Event(false)
             }
         }
+    }
+
+    private suspend fun isEditDeviceNotPaired(deviceID: String, deviceInfo: GetDeviceInfo) =
+        repository.queryDevice(deviceID).getMAC() == deviceInfo.data.mac || !isDevicePaired(deviceInfo)
+
+    private suspend fun isEditNameValid(inputName: String, deviceID: String) = inputName == deviceID || !isNameDuplicate(inputName)
+
+    private suspend fun isDevicePaired(deviceInfo: GetDeviceInfo): Boolean {
+        val isPaired = repository.isDevicePaired(deviceInfo.data.mac)
+        if (isPaired) {
+            _addDeviceErrorCode = ERROR_CODE_DEVICE_PAIRED
+            _addDeviceResult.value = Event(false)
+        }
+        return isPaired
+    }
+
+    private suspend fun isNameDuplicate(inputName: String): Boolean {
+        val isDuplicate = repository.isDeviceNameExisting(inputName)
+        if (isDuplicate) {
+            _addDeviceErrorCode = ERROR_CODE_NAME_EXISTS
+            _addDeviceResult.value = Event(false)
+        }
+        return isDuplicate
     }
 
     fun deleteDevice(deviceID: String) {

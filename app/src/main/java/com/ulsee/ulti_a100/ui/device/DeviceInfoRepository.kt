@@ -10,6 +10,8 @@ import io.realm.kotlin.where
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+private val TAG = DeviceInfoRepository::class.java.simpleName
+
 class DeviceInfoRepository {
 
     suspend fun requestDeviceInfo(baseUrl: String): GetDeviceInfo {
@@ -42,11 +44,31 @@ class DeviceInfoRepository {
     suspend fun queryDevice(deviceID: String): Device = withContext(Dispatchers.IO) {
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
-        val device = realm.where(RealmDevice::class.java).equalTo("mID", deviceID).findFirst()!!
+        val realmDevice = realm.where(RealmDevice::class.java).equalTo("mID", deviceID).findFirst()!!
+        val device = Device.clone(realmDevice)
         realm.commitTransaction()
         realm.close()
-        return@withContext Device.clone(device)
+        return@withContext device
     }
+
+    suspend fun isDevicePaired(macAddress: String): Boolean = withContext(Dispatchers.IO) {
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        val count = realm.where(RealmDevice::class.java).equalTo("mMAC", macAddress).findAll().size
+        realm.commitTransaction()
+        realm.close()
+        return@withContext count > 0
+    }
+
+    suspend fun isDeviceNameExisting(id: String): Boolean = withContext(Dispatchers.IO) {
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        val count = realm.where(RealmDevice::class.java).equalTo("mID", id).findAll().size
+        realm.commitTransaction()
+        realm.close()
+        return@withContext count > 0
+    }
+
 
     suspend fun deleteDevice(deviceID: String) = withContext(Dispatchers.IO) {
         val realm = Realm.getDefaultInstance()

@@ -35,7 +35,7 @@ class DeviceInfoFragment : Fragment() {
     ): View? {
         binding = FragmentDeviceInfoBinding.inflate(inflater, container, false)
         val deviceID = args.recordID
-        Log.d(TAG, "args.recordID: $deviceID")
+//        Log.d(TAG, "args.recordID: $deviceID")
 
         viewModel = ViewModelProvider(this, DeviceInfoFactory(DeviceInfoRepository(), deviceID))
             .get(DeviceInfoViewModel::class.java)

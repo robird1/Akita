@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -29,12 +30,10 @@ class DeviceListAdapter(private val viewModel: DeviceListViewModel, private val 
     override fun getItemCount(): Int = this.deviceList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        Log.d(TAG, "[Enter] onBindViewHolder position: $position")
         holder.bind(deviceList[position], position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-//        Log.d(TAG, "[Enter] onCreateViewHolder")
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_list_device, parent, false)
         return ViewHolder(view, viewModel, fragment)
@@ -53,7 +52,6 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
     private var deviceIP = ""
 
     init {
-        Log.d(TAG, "[Enter] init in ViewHolder")
         val menuLayout = itemView.findViewById<View>(R.id.layout_menu)
         mPopup = PopupMenu(itemView.context, menuLayout)
         mPopup.menu.add("a").setTitle("Edit Device Info")
@@ -64,32 +62,16 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
         mPopup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.title) {
                 "Edit Device Info" -> {
-                    fragment.showAddDeviceDialog(true, deviceID)
+                    fragment.showEditDeviceDialog(device!!)
                 }
                 "Device Setting" -> {
-                    val action = DeviceFragmentDirections.actionToDeviceSettings(deviceIP)
-                    fragment.findNavController().navigate(action)
+                    navigateToSettingFragment(itemView)
                 }
                 "Device Info" -> {
-                    val action = DeviceFragmentDirections.actionToDeviceInfo(deviceID)
-                    fragment.findNavController().navigate(action)
-
+                    navigateToInfoFragment()
                 }
                 "Remove" -> {
-                    AlertDialog.Builder(itemView.context)
-                        .setMessage(itemView.context.getString(R.string.confirm_remove_device))
-                        .setPositiveButton(
-                            itemView.context.getString(R.string.remove)
-                        ) { _, _ ->
-                            viewModel.deleteDevice(deviceID)
-                        }
-                        .setNegativeButton(
-                            "Cancel"
-                        ) { dialog, _ ->
-                            dialog.dismiss()
-                        }
-                        .create()
-                        .show()
+                    showRemoveDialog(itemView)
                 }
             }
 
@@ -103,20 +85,16 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
 
         val thumbLayout = itemView.findViewById<View>(R.id.layout_thumb)
         thumbLayout.setOnClickListener {
-            val uri = Uri.parse(device?.getIP())
-            val url = "rtsp://${uri.host}"
-            val intent = Intent(fragment.context, VlcRtspActivity::class.java)
-            intent.putExtra(VlcRtspActivity.RTSP_URL, url)
-            fragment.startActivity(intent)
+            showLiveStreaming(itemView)
         }
     }
+
 
     fun bind(device: Device, position: Int) {
         this.device = device
         deviceID = device.getID()
         deviceIP = device.getIP()
         nameTV?.text = device.getID()
-
         viewModel.getConnectionStatus(device.getIP(), position, this)
     }
 
@@ -128,6 +106,49 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
             if (isConnected) ctx.getString(R.string.device_connected_click_to_watch_camera) else ctx.getString(
                 R.string.device_not_connected_yet
             )
+    }
+
+    private fun showLiveStreaming(itemView: View) {
+        if (connectedView.visibility == View.VISIBLE) {
+            val uri = Uri.parse(device?.getIP())
+            val url = "rtsp://${uri.host}"
+            val intent = Intent(fragment.context, VlcRtspActivity::class.java)
+            intent.putExtra(VlcRtspActivity.RTSP_URL, url)
+            fragment.startActivity(intent)
+        } else {
+            Toast.makeText(itemView.context, "Device is offline", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun navigateToSettingFragment(itemView: View) {
+        if (connectedView.visibility == View.VISIBLE) {
+            val action = DeviceFragmentDirections.actionToDeviceSettings(deviceIP)
+            fragment.findNavController().navigate(action)
+        } else {
+            Toast.makeText(itemView.context, "Device is offline", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun navigateToInfoFragment() {
+        val action = DeviceFragmentDirections.actionToDeviceInfo(deviceID)
+        fragment.findNavController().navigate(action)
+    }
+
+    private fun showRemoveDialog(itemView: View) {
+        AlertDialog.Builder(itemView.context)
+            .setMessage(itemView.context.getString(R.string.confirm_remove_device))
+            .setPositiveButton(
+                itemView.context.getString(R.string.remove)
+            ) { _, _ ->
+                viewModel.deleteDevice(deviceID)
+            }
+            .setNegativeButton(
+                "Cancel"
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
 }

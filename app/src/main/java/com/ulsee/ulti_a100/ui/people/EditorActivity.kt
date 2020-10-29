@@ -9,6 +9,7 @@ import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Base64
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -104,23 +105,20 @@ class EditorActivity: AppCompatActivity() {
         Glide.with(this).load(Base64.decode(AttributeType.faceImg, Base64.DEFAULT)).into(binding.addImage)
     }
 
-    // TODO deprecated in Android 10
     private fun pickImageFromTakePhoto () {
-        val imageFileName = "take_photo" //make a better file name
-        val storageDir: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        val image: File = File.createTempFile(
-            imageFileName,
-            ".jpg",
-            storageDir
-        )
+        val imageFileName = "take_photo"
+        val storageDir = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        } else {
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        }
 
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        Log.d(TAG, "storageDir: $storageDir")
+
+        val image = File.createTempFile(imageFileName, ".jpg", storageDir)
         //takePhotoIntentUri = Uri.fromFile(image);
-        takePhotoIntentUri = FileProvider.getUriForFile(
-            this,
-            "$packageName.fileprovider",
-            image
-        )
+        takePhotoIntentUri = FileProvider.getUriForFile(this, "$packageName.fileprovider", image)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, takePhotoIntentUri)
         startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO)
     }

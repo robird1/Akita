@@ -11,7 +11,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 private const val RECORD_START_PAGE_INDEX = 1        // TODO start index should be -1
-private const val RECORD_QUERY_COUNT = 5
+private const val RECORD_QUERY_COUNT = 10
 private val TAG = AttendRecordPagingSource::class.java.simpleName
 
 class AttendRecordPagingSource(private val repository: AttendRecordRepository) : PagingSource<Int, AttendRecord>() {

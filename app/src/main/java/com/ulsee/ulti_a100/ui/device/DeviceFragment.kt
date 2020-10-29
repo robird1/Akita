@@ -1,6 +1,7 @@
 package com.ulsee.ulti_a100.ui.device
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,6 +21,7 @@ import com.ulsee.ulti_a100.MainActivity
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.databinding.DialogAddDeviceBinding
 import com.ulsee.ulti_a100.databinding.FragmentDeviceListBinding
+import com.ulsee.ulti_a100.model.Device
 
 private val TAG = DeviceFragment::class.java.simpleName
 private const val PORT_NUMBER = 8080
@@ -75,21 +77,38 @@ class DeviceFragment : Fragment() {
     private fun observeAddDevice() {
         viewModel.addDeviceResult.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { isAddSuccess ->
-                Log.d(TAG, "[Enter] observeAddDevice")
+                Log.d(TAG, "[Enter] observeAddDevice isAddSuccess: $isAddSuccess")
 
                 if (isAddSuccess) {
                     dialog?.dismiss()
                     viewModel.loadDevices()
                 } else {
                     dialog?.let { dialog ->
-                        updateDialog(dialog, false)
-                        val textInputLayoutIP =
-                            dialog.findViewById<TextInputLayout>(R.id.text_input_ip_address)
-                        textInputLayoutIP?.error = "connection failed"
+                        doErrorHandling(dialog)
                     }
                 }
             }
         })
+    }
+
+    private fun doErrorHandling(dialog: AlertDialog) {
+        when (viewModel.addDeviceErrorCode) {
+            ERROR_CODE_DEVICE_PAIRED -> {
+                dialog.dismiss()
+                showIsPairedDialog()
+            }
+            ERROR_CODE_NAME_EXISTS -> {
+                dialog.dismiss()
+                showNameExistDialog()
+            }
+            else -> {
+                showProgressView(dialog, false)
+                val textInputLayoutIP =
+                    dialog.findViewById<TextInputLayout>(R.id.text_input_ip_address)
+                textInputLayoutIP?.error = "connection failed"
+            }
+        }
+        viewModel.resetAddDeviceErrorCode()
     }
 
     private fun observeDeleteDevice() {
@@ -132,30 +151,52 @@ class DeviceFragment : Fragment() {
         Log.d(TAG, "[Enter] onDetach")
     }
 
-    fun showAddDeviceDialog(isEdit: Boolean = false, deviceID: String = "") {
+    private fun showAddDeviceDialog() {
         val binding = DialogAddDeviceBinding.inflate(LayoutInflater.from(requireContext()))
-        if (isEdit) {
-            binding.dialogTitle.text = "Edit Device"
-            binding.buttonAdd.text = "Edit"
-        }
 
+        configDialog(binding)
+
+        binding.buttonAdd.setOnClickListener {
+            val isInputValid = checkInput(binding)
+            if (isInputValid) {
+                showProgressView(dialog!!, true)
+                val deviceName = binding.textInputDeviceName.editText?.text.toString()
+                val url = "http://"+binding.textInputIpAddress.editText?.text.toString()+ ":"+ PORT_NUMBER
+//                Log.d(TAG, "url: $url")
+                viewModel.addDevice(false, "", deviceName, url)
+            }
+        }
+    }
+
+    fun showEditDeviceDialog(device: Device) {
+        val binding = DialogAddDeviceBinding.inflate(LayoutInflater.from(requireContext()))
+        binding.dialogTitle.text = "Edit Device"
+        binding.buttonAdd.text = "Edit"
+        binding.textInputDeviceName.editText?.setText(device.getID())
+        binding.textInputIpAddress.editText?.setText(Uri.parse(device.getIP()).host)
+
+        configDialog(binding)
+
+        binding.buttonAdd.setOnClickListener {
+            val isInputValid = checkInput(binding)
+            if (isInputValid) {
+                showProgressView(dialog!!, true)
+                val deviceName = binding.textInputDeviceName.editText?.text.toString()
+                val url = "http://"+binding.textInputIpAddress.editText?.text.toString()+ ":"+ PORT_NUMBER
+//                Log.d(TAG, "url: $url")
+                viewModel.addDevice(true, device.getID(), deviceName, url)
+            }
+        }
+    }
+
+    private fun configDialog(binding: DialogAddDeviceBinding) {
         dialog = AlertDialog.Builder(requireActivity())
             .setView(binding.root)
             .setCancelable(false)
             .create()
         dialog!!.show()
 
-        binding.buttonAdd.setOnClickListener {
-            val isInputValid = checkInput(binding)
-            if (isInputValid) {
-                updateDialog(dialog!!, true)
-                val deviceName = binding.textInputDeviceName.editText?.text.toString()
-                val url = "http://"+binding.textInputIpAddress.editText?.text.toString()+ ":"+ PORT_NUMBER
-//                Log.d(TAG, "url: $url")
-
-                viewModel.addDevice(isEdit, deviceID, deviceName, url)
-            }
-        }
+        binding.textInputIpAddress.requestFocus()
 
         binding.buttonCancel.setOnClickListener {
             viewModel.cancelAddDeviceJob()
@@ -163,6 +204,39 @@ class DeviceFragment : Fragment() {
         }
 
         addTextChangedListener(binding)
+    }
+
+    private fun showProgressView(dialog: AlertDialog, isConnecting: Boolean) {
+        val inputIP = dialog.findViewById<TextInputLayout>(R.id.text_input_ip_address)
+        val inputDeviceName = dialog.findViewById<TextInputLayout>(R.id.text_input_device_name)
+        val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
+        val btnAdd = dialog.findViewById<Button>(R.id.button_add)
+        inputIP?.isEnabled = !isConnecting
+        inputDeviceName?.isEnabled = !isConnecting
+        progressBar?.visibility = if (isConnecting) View.VISIBLE else View.INVISIBLE
+        btnAdd?.isEnabled = !isConnecting
+    }
+
+    private fun showNameExistDialog() {
+        val dialog = AlertDialog.Builder(requireActivity())
+            .setMessage("The input device name already exists")
+            .setPositiveButton (R.string.ok) { it, _ ->
+                it.dismiss()
+            }
+            .setCancelable(false)
+            .create()
+        dialog.show()
+    }
+
+    private fun showIsPairedDialog() {
+        val dialog = AlertDialog.Builder(requireActivity())
+            .setMessage("The device has already paired")
+            .setPositiveButton (R.string.ok) { it, _ ->
+                it.dismiss()
+            }
+            .setCancelable(false)
+            .create()
+        dialog.show()
     }
 
     private fun addTextChangedListener(binding: DialogAddDeviceBinding) {
@@ -197,17 +271,6 @@ class DeviceFragment : Fragment() {
             }
             false
         }
-    }
-
-    private fun updateDialog(dialog: AlertDialog, isConnecting: Boolean) {
-        val inputIP = dialog.findViewById<TextInputLayout>(R.id.text_input_ip_address)
-        val inputDeviceName = dialog.findViewById<TextInputLayout>(R.id.text_input_device_name)
-        val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
-        val btnAdd = dialog.findViewById<Button>(R.id.button_add)
-        inputIP?.isEnabled = !isConnecting
-        inputDeviceName?.isEnabled = !isConnecting
-        progressBar?.visibility = if (isConnecting) View.VISIBLE else View.INVISIBLE
-        btnAdd?.isEnabled = !isConnecting
     }
 
 }
