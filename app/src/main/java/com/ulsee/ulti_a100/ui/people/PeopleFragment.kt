@@ -1,7 +1,6 @@
 package com.ulsee.ulti_a100.ui.people
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,32 +12,34 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.ulti_a100.MainActivity
 import com.ulsee.ulti_a100.R
+import com.ulsee.ulti_a100.data.response.AllPerson
 import com.ulsee.ulti_a100.databinding.FragmentPeopleBinding
-import com.ulsee.ulti_a100.model.People
 
 private val TAG = PeopleFragment::class.java.simpleName
 private const val REQUEST_ACTIVITY_EDITOR = 1234
 
-class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, SearchView.OnQueryTextListener,
+class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
     MenuItem.OnActionExpandListener, ActionMode.Callback, PeopleAdapter.OnRecyclerItemCallbackListener {
 
     private lateinit var binding: FragmentPeopleBinding
-    private val adapter = PeopleAdapter()
+    private lateinit var adapter: PeopleAdapter
     private lateinit var viewModel: PeopleViewModel
     private var position = -1
     private var isSearchMode = false
-    private lateinit var searchView: PeopleSearchView
+//    private lateinit var searchView: PeopleSearchView
     private var actionMode: ActionMode? = null
-    private lateinit var fileList: List<People>              // for action mode
+    private lateinit var fileList: List<AllPerson>              // for action mode
     private lateinit var actionModeView: RelativeLayout
     private lateinit var actionModeTitle: TextView
     private lateinit var itemTouchHelper: ItemTouchHelper
+    private val args: PeopleFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,23 +51,26 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
         initRecyclerView()
         initRecyclerViewTouchHelper()
         initFab()
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
         initActionModeView()
         setFragmentTitle()
         observePeopleList()
         observeDeletePeople()
-        observeSearchPeople()
+//        observeSearchPeople()
+
         return binding.root
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this, PeopleFactory(PeopleRepository()))
+        viewModel = ViewModelProvider(this, PeopleFactory(PeopleRepository(args.url)))
             .get(PeopleViewModel::class.java)
+        binding.progressView.visibility = View.VISIBLE
     }
 
     private fun initRecyclerView() {
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         binding.recyclerView.addItemDecoration(decoration)
+        adapter = PeopleAdapter(viewModel)
         binding.recyclerView.adapter = adapter
         adapter.setOnRecyclerItemCallbackListener(this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
@@ -77,6 +81,19 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
             if (resultCode == Activity.RESULT_OK) {
                 viewModel.loadRecord()
 
+//                if (data?.getStringExtra("mode") == "add") {
+//                    (binding.recyclerView.adapter as PeopleAdapter).addItem()
+//
+//                } else if (data?.getStringExtra("mode") == "edit") {
+//                    (binding.recyclerView.adapter as PeopleAdapter).editItem(position)
+//
+//                } else {
+//
+//                }
+
+                binding.progressView.visibility = View.INVISIBLE
+//                Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show()
+
                 // close searchView after edit a record
                 (activity as MainActivity).binding.toolbar.collapseActionView()
             }
@@ -84,63 +101,65 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        Log.d(TAG, "[Enter] onCreateOptionsMenu")
-        inflater.inflate(R.menu.people_option_menu, menu)
-        configSearchView(menu)
-//        super.onCreateOptionsMenu(menu, inflater)
-    }
 
-    override fun onDestroyOptionsMenu() {
-        super.onDestroyOptionsMenu()
-        if (actionMode != null) {
-            actionMode!!.finish()
-            actionMode = null
-        }
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-//            R.id.select_file_to_sync -> {
-//                startActionMode()
-//                return true
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+////        Log.d(TAG, "[Enter] onCreateOptionsMenu")
+//        inflater.inflate(R.menu.people_option_menu, menu)
+//        configSearchView(menu)
+////        super.onCreateOptionsMenu(menu, inflater)
+//    }
+//
+//    override fun onDestroyOptionsMenu() {
+//        super.onDestroyOptionsMenu()
+//        if (actionMode != null) {
+//            actionMode!!.finish()
+//            actionMode = null
+//        }
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+////            R.id.select_file_to_sync -> {
+////                startActionMode()
+////                return true
+////            }
+//            R.id.sync -> {
+//                showConfirmDialog()
 //            }
-            R.id.sync -> {
-                showConfirmDialog()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun showConfirmDialog() {
-        val ctx = requireContext()
-        AlertDialog.Builder(ctx)
-            .setMessage(ctx.getString(R.string.confirm_face_sync))
-            .setPositiveButton(
-                ctx.getString(R.string.sync)
-            ) { _, _ ->
-                //                        viewModel.deleteDevice(deviceID)
-                viewModel.synFace()
-            }
-            .setNegativeButton(
-                ctx.getString(R.string.cancel)
-            ) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        if (query.isNullOrEmpty()) return true
-        searchView.clearFocus()
-        viewModel.searchPeople(query)
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-        return false
-    }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
+//
+//    private fun showConfirmDialog() {
+//        val ctx = requireContext()
+//        AlertDialog.Builder(ctx)
+//            .setMessage(ctx.getString(R.string.confirm_face_sync))
+//            .setPositiveButton(
+//                ctx.getString(R.string.sync)
+//            ) { _, _ ->
+//                //                        viewModel.deleteDevice(deviceID)
+//                viewModel.synFace()
+//            }
+//            .setNegativeButton(
+//                ctx.getString(R.string.cancel)
+//            ) { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .create()
+//            .show()
+//    }
+//
+//    override fun onQueryTextSubmit(query: String?): Boolean {
+//        if (query.isNullOrEmpty()) return true
+//        searchView.clearFocus()
+//        viewModel.searchPeople(query)
+//        return false
+//    }
+//
+//    override fun onQueryTextChange(newText: String?): Boolean {
+//        return false
+//    }
 
     override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
         isSearchMode = true
@@ -155,7 +174,8 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
         return true
     }
 
-    override fun onRecyclerItemClick(position: Int, data: People) {
+    override fun onRecyclerItemClick(position: Int, data: AllPerson) {
+        this.position = position
         if (actionMode == null) {
             openEditor(data, true)
         } else {
@@ -163,12 +183,12 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
         }
     }
 
-    override fun onRecyclerItemLongClick(position: Int) {
-        if (actionMode == null) {
-            startActionMode()
-            selectAtPosition(position)
-        }
-    }
+//    override fun onRecyclerItemLongClick(position: Int) {
+//        if (actionMode == null) {
+//            startActionMode()
+//            selectAtPosition(position)
+//        }
+//    }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         initView(mode)
@@ -214,7 +234,7 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int, position: Int) {
-        val deletedItem: People = (binding.recyclerView.adapter as PeopleAdapter).peopleList[position]
+        val deletedItem= (binding.recyclerView.adapter as PeopleAdapter).peopleList[position]
         deletePeople(deletedItem, position)
     }
 
@@ -290,7 +310,7 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
     private fun initFab() {
         binding.fab.setOnClickListener {
             if (actionMode == null) {
-                openEditor(People(), false)
+                openEditor(null, false)
             } else
                 toggleSelectAll()
         }
@@ -332,13 +352,13 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
         adapter.notifyDataSetChanged()
     }
 
-    private fun configSearchView(menu: Menu) {
-        val menuSearchItem = menu.findItem(R.id.my_search)
-        searchView = (menuSearchItem.actionView as PeopleSearchView)
-        searchView.queryHint = "search name"
-        searchView.setOnQueryTextListener(this)
-        menuSearchItem.setOnActionExpandListener(this)
-    }
+//    private fun configSearchView(menu: Menu) {
+//        val menuSearchItem = menu.findItem(R.id.my_search)
+//        searchView = (menuSearchItem.actionView as PeopleSearchView)
+//        searchView.queryHint = "search name"
+//        searchView.setOnQueryTextListener(this)
+//        menuSearchItem.setOnActionExpandListener(this)
+//    }
 
     private fun getSelectedCount(): Int {
         var count = 0
@@ -348,8 +368,8 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
         return count
     }
 
-    private fun getSelectedFiles(): List<People> {
-        val files = ArrayList<People>()
+    private fun getSelectedFiles(): List<AllPerson> {
+        val files = ArrayList<AllPerson>()
         for (file in fileList) {
             if (file.checked) files.add(file)
         }
@@ -359,8 +379,9 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
     private fun observePeopleList() {
         viewModel.peopleList.observe(viewLifecycleOwner, {
             Log.d(TAG, "[Enter] observePeopleList size: ${it.size}")
-            (binding.recyclerView.adapter as PeopleAdapter).setList(it)
             fileList = it
+            (binding.recyclerView.adapter as PeopleAdapter).setList(it)
+            binding.progressView.visibility = View.INVISIBLE
         })
     }
 
@@ -370,27 +391,24 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
                 if (isSuccess) {
                     Log.d(TAG, "[Enter] observeDeletePeople() success!!")
                     (binding.recyclerView.adapter as PeopleAdapter).removeItem(position)
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.remove_successfully),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    binding.progressView.visibility = View.INVISIBLE
+                    Toast.makeText(requireContext(), getString(R.string.remove_successfully), Toast.LENGTH_SHORT).show()
                 }
             }
         })
     }
 
-    private fun observeSearchPeople() {
-        viewModel.searchPeopleList.observe(viewLifecycleOwner, { it ->
-            it.getContentIfNotHandled()?.let {
-                Log.d(TAG, "[Enter] observeSearchPeople size: ${it.size}")
-                (binding.recyclerView.adapter as PeopleAdapter).setList(it)
-                fileList = it
-            }
-        })
-    }
+//    private fun observeSearchPeople() {
+//        viewModel.searchPeopleList.observe(viewLifecycleOwner, { it ->
+//            it.getContentIfNotHandled()?.let {
+//                Log.d(TAG, "[Enter] observeSearchPeople size: ${it.size}")
+//                (binding.recyclerView.adapter as PeopleAdapter).setList(it)
+//                fileList = it
+//            }
+//        })
+//    }
 
-    private fun openEditor(people: People, isEditMode: Boolean) {
+    private fun openEditor(people: AllPerson?, isEditMode: Boolean) {
         val intent = Intent(context, EditorActivity::class.java)
         if (isEditMode) {
             // TODO refactor
@@ -399,14 +417,20 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener, Se
             AttributeType.GENDER.isInputValid  = true
             AttributeType.MAIL.isInputValid = true
         }
-        AttributeType.setAttributeData(people)
+        if (people != null) {    // edit mode
+            AttributeType.setAttributeData(people)
+        } else {   // add mode
+            AttributeType.clearAttributeData()
+        }
         intent.putExtra("is_edit_mode", isEditMode)
+        intent.putExtra("url", args.url)
         startActivityForResult(intent, REQUEST_ACTIVITY_EDITOR)
     }
 
-    private fun deletePeople(people: People, position: Int) {
+    private fun deletePeople(people: AllPerson, position: Int) {
         this.position = position
-        viewModel.deleteRecord(people)
+        binding.progressView.visibility = View.VISIBLE
+        viewModel.deletePerson(people)
     }
 
     private fun setFragmentTitle() {

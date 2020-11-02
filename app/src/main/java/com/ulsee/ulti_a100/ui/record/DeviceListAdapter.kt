@@ -5,14 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.model.Device
 
 private val TAG = DeviceListAdapter::class.java.simpleName
 
-class DeviceListAdapter(private val viewModel: DeviceListViewModel, private val fragment: DeviceFragment) : RecyclerView.Adapter<RecordViewHolder>() {
+open class DeviceListAdapter(private val viewModel: DeviceListViewModel) : RecyclerView.Adapter<RecordViewHolder>() {
 
     private var deviceList: List<Device> = ArrayList()
     fun setList(list: List<Device>) {
@@ -20,25 +20,21 @@ class DeviceListAdapter(private val viewModel: DeviceListViewModel, private val 
         notifyDataSetChanged()
     }
 
-    fun getList() = deviceList
-
     override fun getItemCount(): Int = this.deviceList.size
 
     override fun onBindViewHolder(holder: RecordViewHolder, position: Int) {
-//        Log.d(TAG, "[Enter] onBindViewHolder position: $position")
         holder.bind(deviceList[position], position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordViewHolder {
-//        Log.d(TAG, "[Enter] onCreateViewHolder")
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_list_record_device, parent, false)
-        return RecordViewHolder(view, viewModel, fragment)
+        return RecordViewHolder(view, viewModel)
     }
 }
 
 
-class RecordViewHolder(itemView: View, private val viewModel: DeviceListViewModel, private val fragment: DeviceFragment) : RecyclerView.ViewHolder(itemView) {
+open class RecordViewHolder(itemView: View, private val viewModel: DeviceListViewModel) : RecyclerView.ViewHolder(itemView) {
     private val nameTV = itemView.findViewById<TextView>(R.id.device_name)
     private val ipTV = itemView.findViewById<TextView>(R.id.device_ip)
     private val connectedView = itemView.findViewById<View>(R.id.view_connected)
@@ -50,8 +46,7 @@ class RecordViewHolder(itemView: View, private val viewModel: DeviceListViewMode
         itemView.setOnClickListener {
             if (connectedView.visibility == View.VISIBLE) {
                 device?.let {
-                    val action = DeviceFragmentDirections.actionToAttendRecord(device!!.getIP())
-                    fragment.findNavController().navigate(action)
+                    itemView.findNavController().navigate(getNavigateAction())
                 }
             } else {
                 Toast.makeText(itemView.context, "Device is offline", Toast.LENGTH_SHORT).show()
@@ -71,5 +66,8 @@ class RecordViewHolder(itemView: View, private val viewModel: DeviceListViewMode
         connectedView.visibility = if (isConnected) View.VISIBLE else View.GONE
         notConnectedView.visibility = if (!isConnected) View.VISIBLE else View.GONE
     }
+
+    open fun getNavigateAction() = DeviceFragmentDirections.actionToAttendRecord(device!!.getIP())
+
 
 }

@@ -42,6 +42,10 @@
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
+        <activity
+            android:name="com.ulsee.ulti_a100.ui.people.DeviceSyncActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
 
         <activity
             android:name="com.ulsee.ulti_a100.ui.streaming.VlcRtspActivity"

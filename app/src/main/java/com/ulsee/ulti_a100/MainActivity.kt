@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.toolbar.collapseActionView()
             when (destination.id) {
+                R.id.navigation_people -> setTitle("People")
+                R.id.navigation_record -> setTitle("Record")
                 R.id.attend_record -> hideBottomNav()
                 R.id.device_settings -> hideBottomNav()
                 R.id.language_config -> hideBottomNav()
