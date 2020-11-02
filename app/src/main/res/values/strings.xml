@@ -13,6 +13,9 @@
     <string name="retry">Retry</string>
     <string name="sync">Sync</string>
     <string name="apply">Apply</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="done">Done</string>
 
     <string name="update_successfully">Update Successful</string>
     <string name="create_successfully">create successfully</string>

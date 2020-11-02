@@ -15,7 +15,7 @@ import com.ulsee.ulti_a100.R
 
 private val TAG = EditorAdapter::class.java.simpleName
 
-class EditorAdapter(private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class EditorAdapter(private val context: Context, private val isEditingMode: Boolean): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 //        Log.d(TAG, "[Enter] onCreateViewHolder")
@@ -67,6 +67,9 @@ class EditorAdapter(private val context: Context): RecyclerView.Adapter<Recycler
             textInputLayout.hint = AttributeType.fromPosition(position).fieldName
             textInputLayout.helperText = AttributeType.fromPosition(position).helperText
             textInputLayout.editText?.setText(AttributeType.fromPosition(position).inputValue)
+            if (isEditingMode && position == AttributeType.WORK_ID.position) {
+                textInputLayout.editText?.isEnabled = false
+            }
         }
 
         private fun addTextChangedListener() {
@@ -144,7 +147,7 @@ class EditorAdapter(private val context: Context): RecyclerView.Adapter<Recycler
         }
 
         private fun setGenderAdapter() {
-            val items = listOf("Male", "Female")
+            val items = listOf("male", "female")
             val adapter = ArrayAdapter(context, R.layout.list_item_gender, items)
             (textInputLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
         }

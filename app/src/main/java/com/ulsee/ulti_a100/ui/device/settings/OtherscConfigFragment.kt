@@ -34,7 +34,7 @@ class OthersConfigFragment: Fragment() {
             viewModel.setDeviceConfig(getInput())
         }
 
-        (activity as MainActivity).setTitle("Panel UI")
+        (activity as MainActivity).setTitle("Others")
 
         return binding.root
     }

@@ -2,6 +2,7 @@ package com.ulsee.ulti_a100.ui.people
 
 import android.util.Log
 import com.ulsee.ulti_a100.R
+import com.ulsee.ulti_a100.data.response.AllPerson
 import com.ulsee.ulti_a100.model.People
 
 enum class AttributeType(val fieldName: String, val position: Int, val viewType: Int, val helperText: String, var inputValue: String, var isInputValid: Boolean) {
@@ -15,11 +16,11 @@ enum class AttributeType(val fieldName: String, val position: Int, val viewType:
     ADDRESS("Address", 6, R.layout.item_list_people_text, "", "", true);
 
     companion object {
-        var id = 0         // DB record ID
+//        var id = 0         // DB record ID
         var faceImg = ""
 
         fun fromPosition(position: Int): AttributeType {
-            Log.d("AttributeType", "[Enter] fromPosition position: $position")
+//            Log.d("AttributeType", "[Enter] fromPosition position: $position")
 
             for (instance in values()) {
                 if (instance.position == position)
@@ -44,22 +45,24 @@ enum class AttributeType(val fieldName: String, val position: Int, val viewType:
             }
         }
 
-        fun setAttributeData(people: People) {
-            id = people.getID()
-            faceImg = people.getFaceImg()
-            NAME.inputValue = people.getName()
-            WORK_ID.inputValue = people.getWorkID()
-            GENDER.inputValue = people.getGender()
-            MAIL.inputValue = people.getMail()
-            AGE.inputValue = people.getAge()
-            PHONE.inputValue = people.getPhone()
-            ADDRESS.inputValue = people.getAddress()
+        fun setAttributeData(people: AllPerson) {
+//            id = people.getID()
+            if (people.faceImg != null) {
+                faceImg = people.faceImg
+            }
+            NAME.inputValue = people.name
+            WORK_ID.inputValue = people.userId
+            GENDER.inputValue = people.gender
+            MAIL.inputValue = people.email
+            AGE.inputValue = if (people.age != 0) people.age.toString() else ""
+            PHONE.inputValue = people.phone
+            ADDRESS.inputValue = people.address
         }
 
 
         fun getAttributeData(): People {
             val people = People()
-            people.setID(id)
+//            people.setID(id)
             people.setFaceImg(faceImg)
             people.setName(NAME.inputValue)
             people.setWorkID(WORK_ID.inputValue)
@@ -67,6 +70,7 @@ enum class AttributeType(val fieldName: String, val position: Int, val viewType:
             people.setMail(MAIL.inputValue)
             people.setAge(AGE.inputValue)
             people.setAddress(ADDRESS.inputValue)
+            people.setPhone(PHONE.inputValue)
             return people
         }
     }

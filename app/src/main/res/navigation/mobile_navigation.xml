@@ -21,9 +21,13 @@
 
     <fragment
         android:id="@+id/navigation_people"
-        android:name="com.ulsee.ulti_a100.ui.people.PeopleFragment"
+        android:name="com.ulsee.ulti_a100.ui.people.DeviceFragment"
         android:label="@string/title_people"
-        tools:layout="@layout/fragment_people_list" />
+        tools:layout="@layout/fragment_people_list" >
+        <action
+            android:id="@+id/action_to_people"
+            app:destination="@id/people" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_record"
@@ -48,6 +52,17 @@
         tools:layout="@layout/fragment_device_info" >
         <argument
             android:name="recordID"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/people"
+        android:name="com.ulsee.ulti_a100.ui.people.PeopleFragment"
+        android:label="@string/title_people"
+        tools:layout="@layout/fragment_people_list" >
+        <argument
+            android:name="url"
             android:defaultValue=""
             app:argType="string" />
     </fragment>

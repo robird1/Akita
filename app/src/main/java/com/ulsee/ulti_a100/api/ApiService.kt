@@ -41,14 +41,20 @@ interface ApiService {
     @POST("api/v1/face/queryAttendRecord")
     suspend fun requestAttendRecord(@Body params: RequestBody): QueryAttendRecord
 
-//    @POST("api/v1/face/queryAllPerson")
-//    suspend fun requestAllPerson(): AllPerson
+    @POST("api/v1/face/queryAllPerson")
+    suspend fun requestAllPerson(@Body params: RequestBody): QueryAllPerson
 
     @POST("api/v1/face/queryPerson")
     suspend fun requestPerson(@Body params: RequestBody): QueryPerson
 
     @POST("api/v1/face/addPerson")
     suspend fun requestAddPerson(@Body params: RequestBody): AddPerson
+
+    @POST("api/v1/face/modifyPerson")
+    suspend fun requestModifyPerson(@Body params: RequestBody): ModifyPerson
+
+    @POST("api/v1/face/deletePerson")
+    suspend fun requestDeletePerson(@Body params: RequestBody): DeletePerson
 
     @POST("api/v1/face/getUIConfig")
     suspend fun getDeviceConfig(): getUIConfig
