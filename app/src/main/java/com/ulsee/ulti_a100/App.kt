@@ -4,10 +4,14 @@ import android.app.Application
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import kotlinx.coroutines.Job
 import java.io.PrintWriter
 import java.io.StringWriter
 
 class App : Application() {
+
+    var job: Job? = null
+    val TAG = "Application"
 
     override fun onCreate() {
         super.onCreate()
@@ -30,6 +34,12 @@ class App : Application() {
         Realm.setDefaultConfiguration(config)
 
 //        initUncaughtExceptionHandler()
+        listenNotification()
+    }
+
+    override fun onTerminate() {
+        job?.cancel()
+        super.onTerminate()
     }
 
     private fun initUncaughtExceptionHandler() {

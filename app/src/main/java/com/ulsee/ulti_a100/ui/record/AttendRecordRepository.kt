@@ -10,7 +10,7 @@ import com.ulsee.ulti_a100.data.response.QueryAttendRecord
 import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 
-class AttendRecordRepository(private val url: String) {
+class AttendRecordRepository(val url: String) {
     suspend fun requestAttendRecordCount(): GetAttendRecordCount {
         return ApiService.create(url).requestAttendRecordCount()
     }

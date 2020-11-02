@@ -47,5 +47,6 @@
     <string name="language_tu">Turkish</string>
     <string name="language_pl">Polish</string>
 
+    <string name="title_alert_notification">Notification</string>
 
 </resources>
