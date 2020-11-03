@@ -86,6 +86,8 @@ fun App.listenNotification() {
                     Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
                 } catch (exception: HttpException) {
                     Log.d(TAG, "listenNotification, $key HttpException: "+ exception.message)
+                } catch (excception: Exception) {
+                    Log.d(TAG, "listenNotification, $key Exception: "+ exception.message)
                 }
             }
             delay(3000)

@@ -34,6 +34,9 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository) :
         } catch (exception: HttpException) {
             Log.d(TAG, "HttpException: "+ exception.message)
             LoadResult.Error(exception)
+        } catch (exception: Exception) {
+            Log.d(TAG, "Exception: "+ exception.message)
+            LoadResult.Error(exception)
         }
     }
 
