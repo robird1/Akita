@@ -64,6 +64,7 @@ class DeviceSyncActivity: AppCompatActivity() {
         })
     }
 
+    // TODO
     private fun observeSyncDevices() {
         viewModel.syncResult.observe(this, {
             binding.progressView.visibility = View.INVISIBLE

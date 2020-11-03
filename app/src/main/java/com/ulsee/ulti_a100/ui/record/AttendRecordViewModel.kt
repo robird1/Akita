@@ -29,7 +29,7 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
         if (lastResult != null) {
             return lastResult
         }
-        val newResult: Flow<PagingData<AttendRecord>> = repository.getSearchResultStream().cachedIn(viewModelScope)
+        val newResult: Flow<PagingData<AttendRecord>> = repository.getSearchResultStream(totalCount).cachedIn(viewModelScope)
         currentSearchResult = newResult
         return newResult
     }

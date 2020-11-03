@@ -33,7 +33,7 @@ class App : Application() {
             .build()
         Realm.setDefaultConfiguration(config)
 
-//        initUncaughtExceptionHandler()
+        initUncaughtExceptionHandler()
         listenNotification()
     }
 
