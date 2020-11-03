@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.data.response.AttendRecord
+import com.ulsee.ulti_a100.utils.ImageTemp
 
 private val TAG = AttendRecordAdapter::class.java.simpleName
 
@@ -45,7 +46,7 @@ class AttendRecordAdapter : PagingDataAdapter<AttendRecord, RecyclerView.ViewHol
 class AttendRecordViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val faceView = view.findViewById<ImageView>(R.id.face_img)
     private val textName = view.findViewById<TextView>(R.id.textView_peopleName)
-    private val textTemprature = view.findViewById<TextView>(R.id.textView_temperature)
+    private val textTemperature = view.findViewById<TextView>(R.id.textView_temperature)
     private val textDate = view.findViewById<TextView>(R.id.textView_date)
     private var data: AttendRecord? = null
 
@@ -53,12 +54,14 @@ class AttendRecordViewHolder(private val view: View) : RecyclerView.ViewHolder(v
         view.setOnClickListener {
             data?.let { it ->
                 val bundle = Bundle()
-                bundle.putString("img", it.img)
+//                bundle.putString("img", it.img)
+                ImageTemp.imgBase64 = it.img
                 bundle.putString("name", it.name)
                 bundle.putInt("age", it.age)
                 bundle.putString("gender", it.gender)
                 bundle.putString("country", it.country)
                 bundle.putString("date", it.timestamp)
+                bundle.putString("temperature", it.bodyTemperature)
                 val intent = Intent(view.context, RecordInfoActivity::class.java)
                 intent.putExtra("bundle", bundle)
                 view.context.startActivity(intent)
@@ -70,8 +73,8 @@ class AttendRecordViewHolder(private val view: View) : RecyclerView.ViewHolder(v
         if (data != null) {
             this.data = data
             textName.text = data.name
-            textTemprature.text = data.bodyTemperature
-            textDate.text = data.timestamp
+            textTemperature.text = data.bodyTemperature
+            textDate.text = data.timestamp.split(".")[0]
             data.img?.let {
                 val imgBase64 = it.split("data:image/jpeg;base64,")[1]
                 Glide.with(itemView.context).load(Base64.decode(imgBase64, Base64.DEFAULT)).into(faceView)

@@ -19,10 +19,10 @@ class AttendRecordRepository(val url: String) {
         return ApiService.create(url).requestAttendRecord(requestBody)
     }
 
-    fun getSearchResultStream(): Flow<PagingData<AttendRecord>> {
+    fun getSearchResultStream(totalCount: Int): Flow<PagingData<AttendRecord>> {
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE),
-            pagingSourceFactory = { AttendRecordPagingSource(this) }
+            pagingSourceFactory = { AttendRecordPagingSource(this, totalCount) }
         ).flow
     }
 

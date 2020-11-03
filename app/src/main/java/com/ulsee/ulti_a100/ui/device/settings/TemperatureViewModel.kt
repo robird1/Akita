@@ -15,10 +15,10 @@ class TemperatureViewModel(private val repository: SettingRepository) : ViewMode
     val result: LiveData<Boolean>
         get() = _result
 
-    fun setDeviceConfig(max: String, min: String, offset: String) {
+    fun setDeviceConfig(max: String, min: String, offset: String, unit: String) {
         viewModelScope.launch {
             try {
-                val response = repository.setDeviceConfig(createJsonRequestBody(max, min, offset))
+                val response = repository.setDeviceConfig(createJsonRequestBody(max, min, offset, unit))
                 _result.value = isQuerySuccess(response)
 
             } catch (e: Exception) {
@@ -30,8 +30,8 @@ class TemperatureViewModel(private val repository: SettingRepository) : ViewMode
 
     private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
 
-    private fun createJsonRequestBody(max: String, min: String, offset: String): RequestBody {
-        val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n\r\n       \"temperatureUnit\": \"C\",\r\n\r\n       " +
+    private fun createJsonRequestBody(max: String, min: String, offset: String, unit: String): RequestBody {
+        val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n\r\n       \"temperatureUnit\": \"${unit}\",\r\n\r\n       " +
                 "\"minBodyTemperature\": ${min},\r\n\r\n       \"maxBodyTemperature\": ${max},\r\n\r\n       " +
                 "\"offsetBodyTemperature\": ${offset}\r\n\r\n    }\r\n\r\n}\r\n"
 //        Log.d(TAG, "tmp: $tmp")

@@ -5,6 +5,7 @@ import android.util.Base64
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.ulsee.ulti_a100.databinding.ActivityRecordInfoBinding
+import com.ulsee.ulti_a100.utils.ImageTemp
 
 class RecordInfoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityRecordInfoBinding
@@ -17,27 +18,57 @@ class RecordInfoActivity: AppCompatActivity() {
 
         val data = intent.getBundleExtra("bundle")
         data?.let {
-            binding.recordInfoName.text = it.getString("name", "")
-
-            val ageValue = it.getInt("age", -1)
-            if (ageValue == -1) {
-                binding.recordInfoAge.text = ""
-            } else {
-                binding.recordInfoAge.text = ageValue.toString()
-            }
-
-            val genderValue = it.getString("gender", "")
-            if (genderValue == "0") {
-                binding.recordInfoGender.text = "male"
-            } else {
-                binding.recordInfoGender.text = "female"
-            }
-
-            binding.recordInfoCountry.text = it.getString("country", "")
-            binding.recordInfoDate.text = it.getString("date", "")
-
-            val imgBase64 = it.getString("img", "").split("data:image/jpeg;base64,")[1]
-            Glide.with(this).load(Base64.decode(imgBase64, Base64.DEFAULT)).into(binding.recordInfoFace)
+            showName(it)
+            showTemperature(it)
+            showAge(it)
+            showGender(it)
+            showCountry(it)
+            showDate(it)
+            showFaceImg()
         }
     }
+
+    private fun showFaceImg() {
+        val temp = ImageTemp.imgBase64.split("data:image/jpeg;base64,")
+        if (temp.size == 2) {
+            val imgBase64 = temp[1]
+            Glide.with(this).load(Base64.decode(imgBase64, Base64.DEFAULT))
+                .into(binding.recordInfoFace)
+        }
+    }
+
+    private fun showGender(it: Bundle) {
+        val genderValue = it.getString("gender", "")
+        if (genderValue == "0") {
+            binding.recordInfoGender.text = "male"
+        } else {
+            binding.recordInfoGender.text = "female"
+        }
+    }
+
+    private fun showAge(it: Bundle) {
+        val ageValue = it.getInt("age", 0)
+        if (ageValue == 0) {
+            binding.recordInfoAge.text = ""
+        } else {
+            binding.recordInfoAge.text = ageValue.toString()
+        }
+    }
+
+    private fun showTemperature(it: Bundle) {
+        binding.recordInfoTemperature.text = it.getString("temperature", "")
+    }
+
+    private fun showDate(it: Bundle) {
+        binding.recordInfoDate.text = it.getString("date", "").split(".")[0]
+    }
+
+    private fun showCountry(it: Bundle) {
+        binding.recordInfoCountry.text = it.getString("country", "")
+    }
+
+    private fun showName(it: Bundle) {
+        binding.recordInfoName.text = it.getString("name", "")
+    }
+
 }
