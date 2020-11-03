@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.ulsee.ulti_a100.data.response.AttendRecord
+import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
 import com.ulsee.ulti_a100.ui.record.AttendRecordRepository
 import com.ulsee.ulti_a100.ui.record.RecordInfoActivity
@@ -15,6 +16,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 
 
 fun App.listenNotification() {
@@ -31,6 +34,19 @@ fun App.listenNotification() {
             // 2. get all repository
             val attendRecordRepositoryList = ArrayList<AttendRecordRepository>()
             for (device in deviceList) {
+
+                var isConnected: Boolean
+                try {
+                    val deviceInfo = deviceInfoRepository.requestDeviceInfo(device.getIP())
+                    isConnected = isDeviceOnline(deviceInfo)
+                } catch (e: Exception) {
+                    isConnected = false
+                }
+                if (!isConnected) {
+                    Log.d(TAG, "listenNotification ${device.getIP()} disconnected, skip..")
+                    continue
+                }
+
                 val repository = AttendRecordRepository(device.getIP())
                 attendRecordRepositoryList.add(repository)
             }
@@ -39,32 +55,37 @@ fun App.listenNotification() {
             for (attendRecordRepository in attendRecordRepositoryList) {
                 val key = attendRecordRepository.url
                 val isFirstFetchNotifications = !notificationInfoMap.contains(key)
-
-                if (isFirstFetchNotifications) { // fetch total count first
-                    val response = attendRecordRepository.requestAttendRecordCount()
-                    notificationInfoMap[key] = response.totalCount
-                    Log.d(TAG, "listenNotification $key got totalCount ${response.totalCount}")
-                    continue
-                }
-
-                val startId = notificationInfoMap[key]!!
-                val requestBody = createJsonRequestBody("startId" to startId, "reqCount" to recordQueryCount)
-                Log.d(TAG, "listenNotification $key request from ${startId}, reqCount=${recordQueryCount}")
-                val records = attendRecordRepository.requestAttendRecord(requestBody)
-
-                if (records.recordCount == 0) {
-                    Log.d(TAG, "listenNotification $key, recordCount= 0")
-                    continue
-                }
-
-                Log.d(TAG, "listenNotification $key, recordCount= ${records.recordCount}, size=${records.data.size}")
-
-                if (records.data.isNotEmpty()) {
-                    for (notification in records.data) {
-                        Log.d(TAG, "listenNotification $key, do notify {notifiaction.timestamp}")
-                        doNotify(notification)
+                try {
+                    if (isFirstFetchNotifications) { // fetch total count first
+                        val response = attendRecordRepository.requestAttendRecordCount()
+                        notificationInfoMap[key] = response.totalCount
+                        Log.d(TAG, "listenNotification $key got totalCount ${response.totalCount}")
+                        continue
                     }
-                    notificationInfoMap[key] = notificationInfoMap[key]!!.plus(records.data.size)
+
+                    val startId = notificationInfoMap[key]!!
+                    val requestBody = createJsonRequestBody("startId" to startId, "reqCount" to recordQueryCount)
+                    Log.d(TAG, "listenNotification $key request from ${startId}, reqCount=${recordQueryCount}")
+                    val records = attendRecordRepository.requestAttendRecord(requestBody)
+
+                    if (records.recordCount == 0) {
+                        Log.d(TAG, "listenNotification $key, recordCount= 0")
+                        continue
+                    }
+
+                    Log.d(TAG, "listenNotification $key, recordCount= ${records.recordCount}, size=${records.data.size}")
+
+                    if (records.data.isNotEmpty()) {
+                        for (notification in records.data) {
+                            Log.d(TAG, "listenNotification $key, do notify {notifiaction.timestamp}")
+                            doNotify(notification)
+                        }
+                        notificationInfoMap[key] = notificationInfoMap[key]!!.plus(records.data.size)
+                    }
+                } catch (exception: IOException) {
+                    Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
+                } catch (exception: HttpException) {
+                    Log.d(TAG, "listenNotification, $key HttpException: "+ exception.message)
                 }
             }
             delay(3000)
@@ -77,6 +98,7 @@ private fun App.createJsonRequestBody(vararg params: Pair<String, Int>): Request
     Log.d(TAG, "JSONObject toString: $tmp")
     return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 }
+private fun App.isDeviceOnline(deviceInfo: GetDeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
 
 private fun App.doNotify(notification: AttendRecord) {
     Log.d(TAG, "[Enter] doNotify")
