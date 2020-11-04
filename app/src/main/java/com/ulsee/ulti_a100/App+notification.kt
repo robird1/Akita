@@ -1,10 +1,14 @@
 package com.ulsee.ulti_a100
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.ulsee.ulti_a100.data.response.AttendRecord
 import com.ulsee.ulti_a100.data.response.GetDeviceInfo
+import com.ulsee.ulti_a100.model.AppPreference
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
 import com.ulsee.ulti_a100.ui.device.settings.SettingRepository
 import com.ulsee.ulti_a100.ui.record.AttendRecordRepository
@@ -123,8 +127,10 @@ private fun App.createJsonRequestBody(vararg params: Pair<String, Int>): Request
 private fun App.isDeviceOnline(deviceInfo: GetDeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
 
 private fun App.doNotify(notification: AttendRecord) {
-    Log.d(TAG, "[Enter] doNotify")
-    val isNotificationEnabled = true//AppPreference(mContext.getSharedPreferences("app", Context.MODE_PRIVATE)).isFeverNotificationEnabled()
+
+    val appPreference = AppPreference(PreferenceManager.getDefaultSharedPreferences(this))
+    val isNotificationEnabled = appPreference.isFeverNotificationEnabled()
+    Log.d(TAG, "[Enter] listenNotification.doNotify, isNotificationEnabled= $isNotificationEnabled")
     if (isNotificationEnabled) {
         val mContext = this
         val intent = Intent(this, RecordInfoActivity::class.java)

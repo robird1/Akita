@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 private const val CONNECTED_ADDRESS = "connected_address"
 
 private const val PERMISSION_ONCE_CREATE_FIRST_DEVICE = "isOnceCreateFirstDevice"
+private const val IS_FEVER_NOTIFICATION_ENABLED = "fever_notification"
 
 class AppPreference (private val prefs: SharedPreferences) {
 //    fun setConnectedAddress(address: String) {
@@ -21,5 +22,13 @@ class AppPreference (private val prefs: SharedPreferences) {
 
     fun setOnceCreateFirstDevice() {
         prefs.edit().putBoolean(PERMISSION_ONCE_CREATE_FIRST_DEVICE, true).apply()
+    }
+
+    fun isFeverNotificationEnabled(): Boolean {
+        return prefs.getBoolean(IS_FEVER_NOTIFICATION_ENABLED, false)
+    }
+
+    fun setIsFeverNotificationEnabled(value: Boolean) {
+        prefs.edit().putBoolean(IS_FEVER_NOTIFICATION_ENABLED, value).apply()
     }
 }

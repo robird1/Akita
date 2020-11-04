@@ -51,5 +51,7 @@
     <string name="language_pl">Polish</string>
 
     <string name="title_alert_notification">Notification</string>
+    <string name="notification">Notification</string>
+    <string name="fever_notification">Fever Notification</string>
 
 </resources>
