@@ -8,6 +8,7 @@ import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
 import com.ulsee.ulti_a100.ui.record.AttendRecordRepository
 import com.ulsee.ulti_a100.ui.record.RecordInfoActivity
+import com.ulsee.ulti_a100.utils.ImageTemp
 import com.ulsee.ulti_a100.utils.NotificationCenter
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -86,7 +87,7 @@ fun App.listenNotification() {
                     Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
                 } catch (exception: HttpException) {
                     Log.d(TAG, "listenNotification, $key HttpException: "+ exception.message)
-                } catch (excception: Exception) {
+                } catch (exception: Exception) {
                     Log.d(TAG, "listenNotification, $key Exception: "+ exception.message)
                 }
             }
@@ -111,7 +112,8 @@ private fun App.doNotify(notification: AttendRecord) {
 
         notification.let {
             val bundle = Bundle()
-            bundle.putString("img", it.img)
+//            bundle.putString("img", it.img)
+            ImageTemp.imgBase64 = it.img
             bundle.putString("name", it.name)
             bundle.putInt("age", it.age)
             bundle.putString("gender", it.gender)
