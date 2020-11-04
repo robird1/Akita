@@ -6,6 +6,7 @@ import android.util.Log
 import com.ulsee.ulti_a100.data.response.AttendRecord
 import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
+import com.ulsee.ulti_a100.ui.device.settings.SettingRepository
 import com.ulsee.ulti_a100.ui.record.AttendRecordRepository
 import com.ulsee.ulti_a100.ui.record.RecordInfoActivity
 import com.ulsee.ulti_a100.utils.ImageTemp
@@ -20,11 +21,16 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
 
+class DeviceNotificationInfo {
+    var startId : Int? = null
+    var minTemp = 0.0
+    var maxTemp = 0.0
+}
 
 fun App.listenNotification() {
     job = GlobalScope.launch {
         
-        val notificationInfoMap = HashMap<String,Int>()
+        val notificationInfoMap = HashMap<String,DeviceNotificationInfo>()
         val recordQueryCount = 10
 
         while(true) {
@@ -38,8 +44,17 @@ fun App.listenNotification() {
 
                 var isConnected: Boolean
                 try {
-                    val deviceInfo = deviceInfoRepository.requestDeviceInfo(device.getIP())
-                    isConnected = isDeviceOnline(deviceInfo)
+                    val url = device.getIP()
+                    val deviceSettingRepository = SettingRepository(url)
+                    val deviceConfig = deviceSettingRepository.getDeviceConfig()
+                    if (!notificationInfoMap.containsKey(url)) {
+                        notificationInfoMap[url] = DeviceNotificationInfo()
+                    }
+                    notificationInfoMap[url]!!.minTemp = deviceConfig.data.FaceUIConfig.minBodyTemperature
+                    notificationInfoMap[url]!!.maxTemp = deviceConfig.data.FaceUIConfig.maxBodyTemperature
+                    isConnected = true
+//                    val deviceInfo = deviceInfoRepository.requestDeviceInfo(device.getIP())
+//                    isConnected = isDeviceOnline(deviceInfo)
                 } catch (e: Exception) {
                     isConnected = false
                 }
@@ -55,16 +70,16 @@ fun App.listenNotification() {
             // 3. get notification
             for (attendRecordRepository in attendRecordRepositoryList) {
                 val key = attendRecordRepository.url
-                val isFirstFetchNotifications = !notificationInfoMap.contains(key)
+                val isFirstFetchNotifications = notificationInfoMap[key]!!.startId == null
                 try {
                     if (isFirstFetchNotifications) { // fetch total count first
                         val response = attendRecordRepository.requestAttendRecordCount()
-                        notificationInfoMap[key] = response.totalCount
+                        notificationInfoMap[key]!!.startId = response.totalCount
                         Log.d(TAG, "listenNotification $key got totalCount ${response.totalCount}")
                         continue
                     }
 
-                    val startId = notificationInfoMap[key]!!
+                    val startId = notificationInfoMap[key]!!.startId!!
                     val requestBody = createJsonRequestBody("startId" to startId, "reqCount" to recordQueryCount)
                     Log.d(TAG, "listenNotification $key request from ${startId}, reqCount=${recordQueryCount}")
                     val records = attendRecordRepository.requestAttendRecord(requestBody)
@@ -78,10 +93,14 @@ fun App.listenNotification() {
 
                     if (records.data.isNotEmpty()) {
                         for (notification in records.data) {
-                            Log.d(TAG, "listenNotification $key, do notify {notifiaction.timestamp}")
-                            doNotify(notification)
+                            val temp = notification.bodyTemperature.toDouble()
+                            val shouldNotify = temp < notificationInfoMap[key]!!.minTemp || temp > notificationInfoMap[key]!!.maxTemp
+                            Log.d(TAG, "listenNotification $key, shouldNotify = $shouldNotify {notifiaction.timestamp}")
+                            if (shouldNotify) {
+                                doNotify(notification)
+                            }
                         }
-                        notificationInfoMap[key] = notificationInfoMap[key]!!.plus(records.data.size)
+                        notificationInfoMap[key]!!.startId = notificationInfoMap[key]!!.startId?.plus(records.data.size)
                     }
                 } catch (exception: IOException) {
                     Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
@@ -119,6 +138,7 @@ private fun App.doNotify(notification: AttendRecord) {
             bundle.putString("gender", it.gender)
             bundle.putString("country", it.country)
             bundle.putString("date", it.timestamp)
+            bundle.putString("temperature", it.bodyTemperature)
             intent.putExtra("bundle", bundle)
         }
         NotificationCenter.shared.show(mContext, intent, mContext.getString(R.string.title_alert_notification), notification)
