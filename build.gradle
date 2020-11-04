@@ -36,4 +36,5 @@ ext {
     lifecycleVersion = '2.2.0'
     pagingVersion = '3.0.0-alpha01'
     vlcVersion = '3.3.4'
+    preferenceVersion = '1.1.1'
 }
