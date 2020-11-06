@@ -108,9 +108,9 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
             return
         }
 
-        Log.d(TAG, "listenNotification $key, recordCount= ${records.recordCount}, size=${records.data.size}")
+        Log.d(TAG, "listenNotification $key, recordCount= ${records.recordCount}, size=${records.data?.size}")
 
-        if (records.data.isNotEmpty()) {
+        if (records.data != null && records.data.isNotEmpty()) {
             for (notification in records.data) {
                 val temp = notification.bodyTemperature.toDouble()
                 val shouldNotify = temp < notificationInfoMap[key]!!.minTemp || temp > notificationInfoMap[key]!!.maxTemp

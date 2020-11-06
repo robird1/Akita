@@ -36,25 +36,25 @@ class AttendRecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAttendRecordsBinding.inflate(inflater, container, false)
-        val url = args.url
-        Log.d(TAG, "args.url: $url")
-
-        viewModel = ViewModelProvider(this, AttendRecordFactory(AttendRecordRepository(url)))
+        viewModel = ViewModelProvider(this, AttendRecordFactory(AttendRecordRepository(args.url)))
             .get(AttendRecordViewModel::class.java)
 
-        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        binding.recyclerView.addItemDecoration(decoration)
-//        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        initSwipeRefreshView()
+        initRecyclerView()
         initAdapter()
         binding.retryButton.setOnClickListener { adapter.retry() }
+        observeRecordCount()
+        observeTemperatureUnit()
 
         (activity as MainActivity).setTitle("Records")
 
-        observeRecordCount()
-//        requestRecords()
-
         return binding.root
+    }
+
+    private fun initRecyclerView() {
+        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.recyclerView.addItemDecoration(decoration)
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     private fun initAdapter() {
@@ -63,12 +63,20 @@ class AttendRecordFragment : Fragment() {
             footer = ReposLoadStateAdapter { adapter.retry() }
         )
         adapter.addLoadStateListener { loadState ->
+//            Log.d(TAG, "[Enter] ${loadState.source.refresh} ")
+
             // Only show the list if refresh succeeds.
             binding.recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
             // Show loading spinner during initial load or refresh.
             binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
             // Show the retry state if initial load or refresh fails.
             binding.retryButton.isVisible = loadState.source.refresh is LoadState.Error
+
+            if (binding.swipeRefreshLayout.isRefreshing)
+                binding.progressBar.isVisible = false
+
+            if (loadState.source.refresh is LoadState.NotLoading)
+                binding.swipeRefreshLayout.isRefreshing = false
 
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error
@@ -86,7 +94,7 @@ class AttendRecordFragment : Fragment() {
     }
 
     private fun requestRecords() {
-        Log.d(TAG, "[Enter] requestRecords")
+//        Log.d(TAG, "[Enter] requestRecords")
         // Make sure we cancel the previous job before creating a new one
         val cancel = searchJob?.cancel()
         searchJob = lifecycleScope.launch {
@@ -100,10 +108,40 @@ class AttendRecordFragment : Fragment() {
     private fun observeRecordCount() {
         viewModel.recordCountResult.observe(viewLifecycleOwner, { requestResult ->
             Log.d(TAG, "[Enter] observeRecordCount result: $requestResult")
-//            if (requestResult) {
+            if (requestResult) {
+                if (viewModel.getRecordCount() > 0) {
+//                    requestRecords()
+                    viewModel.getTemperatureUnit()
+                } else {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }
+            } else {
+                Toast.makeText(requireContext(), "Error(${viewModel.errorCode})", Toast.LENGTH_SHORT).show()
+                viewModel.resetErrorCode()
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        })
+    }
+
+    /**
+     *  if unit request failed, observer will observe unit == "C"
+     */
+    private fun observeTemperatureUnit() {
+        viewModel.temperatureUnit.observe(viewLifecycleOwner, { unit ->
+//            Log.d(TAG, "[Enter] observeTemperatureUnit unit: $unit")
+//            if (unit.isNotEmpty()) {
+                adapter.setTemperatureUnit(unit)
                 requestRecords()
 //            }
         })
+    }
+
+    private fun initSwipeRefreshView() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            adapter.setLastTemperatureUnit(adapter.getTemperatureUnit())
+            viewModel.invalidatePagingSource()
+            viewModel.loadRecordCount()
+        }
     }
 
 }

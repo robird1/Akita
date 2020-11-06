@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 
 class AttendRecordRepository(val url: String) {
+    private var pagingSource: AttendRecordPagingSource? = null
+
     suspend fun requestAttendRecordCount(): GetAttendRecordCount {
         return ApiService.create(url).requestAttendRecordCount()
     }
@@ -20,11 +22,17 @@ class AttendRecordRepository(val url: String) {
     }
 
     fun getSearchResultStream(totalCount: Int): Flow<PagingData<AttendRecord>> {
+        pagingSource = AttendRecordPagingSource(this, totalCount)
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE),
-            pagingSourceFactory = { AttendRecordPagingSource(this, totalCount) }
+            pagingSourceFactory = { pagingSource!! }
         ).flow
     }
+
+    fun invalidatePagingSource() {
+        pagingSource?.invalidate()
+    }
+
 
     companion object {
         // PAGE_SIZE = 1 => 1 page per request

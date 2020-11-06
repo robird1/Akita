@@ -57,28 +57,45 @@ class DeviceSyncActivity: AppCompatActivity() {
     }
 
     private fun observeOnlineList() {
-        viewModel.onlineList.observe(this, {
-            Log.d(TAG, "[Enter] observeOnlineList size: ${it.size}")
-            binding.progressView.visibility = View.INVISIBLE
-            (recyclerView.adapter as DeviceSyncAdapter).setList(it)
+        viewModel.onlineList.observe(this, { list ->
+//            if (list != null) {
+                Log.d(TAG, "[Enter] observeOnlineList size: ${list.size}")
+                binding.progressView.visibility = View.INVISIBLE
+                (recyclerView.adapter as DeviceSyncAdapter).setList(list)
+//            } else {
+//                when (viewModel.errorCode) {
+//                    ERROR_CODE_API_NOT_SUCCESS -> {
+//                        Toast.makeText(this, "Error($ERROR_CODE_API_NOT_SUCCESS)", Toast.LENGTH_SHORT).show()
+//                    }
+//                    else ->  {
+//                        Toast.makeText(this, "Error($ERROR_CODE_EXCEPTION)", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//                viewModel.resetErrorCode()
+//            }
         })
     }
 
-    // TODO
     private fun observeSyncDevices() {
-        viewModel.syncResult.observe(this, {
+        viewModel.syncResult.observe(this, { result ->
             binding.progressView.visibility = View.INVISIBLE
-            if (it == true) {
+            if (result == true) {
                 Toast.makeText(this, getString(R.string.done), Toast.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 finish()
             } else {
-                if (viewModel.syncErrorCode == ERROR_CODE_WORK_ID_EXISTS) {
-                    Toast.makeText(this, "The input work ID already exists", Toast.LENGTH_SHORT).show()
-                    viewModel.resetErrorCode()
-                } else {
-                    Toast.makeText(this, "some error occur during the process", Toast.LENGTH_SHORT).show()
+                when (viewModel.errorCode) {
+                    ERROR_CODE_WORK_ID_EXISTS -> {
+                        Toast.makeText(this, "The input work ID already exists", Toast.LENGTH_SHORT).show()
+                    }
+                    ERROR_CODE_API_NOT_SUCCESS -> {
+                        Toast.makeText(this, "Error($ERROR_CODE_API_NOT_SUCCESS)", Toast.LENGTH_SHORT).show()
+                    }
+                    else ->  {
+                        Toast.makeText(this, "Error($ERROR_CODE_EXCEPTION)", Toast.LENGTH_SHORT).show()
+                    }
                 }
+                viewModel.resetErrorCode()
             }
         })
     }

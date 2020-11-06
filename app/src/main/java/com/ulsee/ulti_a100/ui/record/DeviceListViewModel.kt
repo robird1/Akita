@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
 import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.model.Device
+import com.ulsee.ulti_a100.ui.device.POLLING_INTERVAL
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,6 +17,10 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
     val deviceList : LiveData<List<Device>>
         get() = _deviceList
     private val jobList = ArrayList<Job>()
+    private var _deviceStatus = MutableLiveData<DeviceStatus>()
+    val deviceStatus: LiveData<DeviceStatus>
+        get() = _deviceStatus
+
 
     init {
         Log.d(TAG, "[Enter] init()")
@@ -42,22 +47,27 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
         jobList.clear()
     }
 
-    fun getConnectionStatus(url: String, position: Int, viewHolder: RecordViewHolder) {
+    fun getConnectionStatus(device: Device) {
         val job = viewModelScope.launch  {
             while(true) {
-                var isConnected: Boolean
                 try {
-                    val deviceInfo = repository.requestDeviceInfo(url)
-                    isConnected = isDeviceOnline(deviceInfo)
+//                    Log.d(TAG, "[Enter] requestDeviceInfo() MAC: ${device.getMAC()}")
+                    val deviceInfo = repository.requestDeviceInfo(device.getIP())
+                    val isOnline = isDeviceOnline(deviceInfo)
+                    if (isOnline) {
+                        _deviceStatus.value = DeviceStatus(deviceInfo.data.mac, true)
+//                        Log.d(TAG, "MAC: ${deviceInfo.data.mac} isConnected: true")
+                    } else {
+                        _deviceStatus.value = DeviceStatus(device.getMAC(), false)
+//                        Log.d(TAG, "MAC: ${device.getMAC()} isConnected: false")
+                    }
 
                 } catch (e: Exception) {
-                    isConnected = false
+                    _deviceStatus.value = DeviceStatus(device.getMAC(), false)
+//                    Log.d(TAG, "[Enter] Exception ============  MAC: ${device.getMAC()} isConnected: false")
                 }
 
-                Log.d(TAG, "isConnected: $isConnected position: $position")
-
-                viewHolder.displayConnectionStatus(isConnected)
-                delay(5000)
+                delay(POLLING_INTERVAL)
             }
         }
         jobList.add(job)
@@ -66,6 +76,8 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
     private fun isDeviceOnline(deviceInfo: GetDeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
 
 }
+
+data class DeviceStatus(val MAC: String, val isConnected: Boolean)
 
 class DeviceListFactory(private val repository: DeviceInfoRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

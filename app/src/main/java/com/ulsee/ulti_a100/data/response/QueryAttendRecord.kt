@@ -11,7 +11,7 @@ data class GetAttendRecordCount(
 
 data class QueryAttendRecord(
     val command: Int,
-    val data: List<AttendRecord>,
+    val data: List<AttendRecord>?,
     val detail: String,
     val recordCount: Int,
     val status: Int,
