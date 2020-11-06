@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ulsee.ulti_a100.MainActivity
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.data.response.AllPerson
@@ -48,6 +49,7 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
     ): View? {
         binding = FragmentPeopleBinding.inflate(inflater, container, false)
         initViewModel()
+        initSwipeRefreshView()
         initRecyclerView()
         initRecyclerViewTouchHelper()
         initFab()
@@ -65,6 +67,12 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
         viewModel = ViewModelProvider(this, PeopleFactory(PeopleRepository(args.url)))
             .get(PeopleViewModel::class.java)
         binding.progressView.visibility = View.VISIBLE
+    }
+
+    private fun initSwipeRefreshView() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadRecord()
+        }
     }
 
     private fun initRecyclerView() {
@@ -91,12 +99,15 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
 //
 //                }
 
-                binding.progressView.visibility = View.INVISIBLE
 //                Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show()
 
                 // close searchView after edit a record
                 (activity as MainActivity).binding.toolbar.collapseActionView()
+            } else {
+                // do nothing. user clicks back button.
             }
+
+            closeProgressView()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -377,11 +388,21 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
     }
 
     private fun observePeopleList() {
-        viewModel.peopleList.observe(viewLifecycleOwner, {
-            Log.d(TAG, "[Enter] observePeopleList size: ${it.size}")
-            fileList = it
-            (binding.recyclerView.adapter as PeopleAdapter).setList(it)
-            binding.progressView.visibility = View.INVISIBLE
+        viewModel.peopleList.observe(viewLifecycleOwner, { list ->
+            closeProgressView()
+            if (list != null) {
+                Log.d(TAG, "[Enter] observePeopleList size: ${list.size}")
+                fileList = list
+                (binding.recyclerView.adapter as PeopleAdapter).setList(list)
+
+            } else {
+                if (viewModel.errorCode == -1) {    // empty list
+                    (binding.recyclerView.adapter as PeopleAdapter).clearList()
+                } else {
+                    Toast.makeText(requireContext(), "Error(${viewModel.errorCode})", Toast.LENGTH_SHORT).show()
+                    viewModel.resetErrorCode()
+                }
+            }
         })
     }
 
@@ -391,9 +412,11 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
                 if (isSuccess) {
                     Log.d(TAG, "[Enter] observeDeletePeople() success!!")
                     (binding.recyclerView.adapter as PeopleAdapter).removeItem(position)
-                    binding.progressView.visibility = View.INVISIBLE
                     Toast.makeText(requireContext(), getString(R.string.remove_successfully), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Error(${viewModel.errorCode})", Toast.LENGTH_SHORT).show()
                 }
+                closeProgressView()
             }
         })
     }
@@ -435,6 +458,11 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
 
     private fun setFragmentTitle() {
         (activity as MainActivity).setTitle("People")
+    }
+
+    private fun closeProgressView() {
+        binding.progressView.visibility = View.INVISIBLE
+        binding.swipeRefreshLayout.isRefreshing = false
     }
 
 }

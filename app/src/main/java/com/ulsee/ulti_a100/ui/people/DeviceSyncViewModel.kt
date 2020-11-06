@@ -21,9 +21,9 @@ class DeviceSyncViewModel(private val repo: DeviceInfoRepository) : ViewModel() 
     private var _syncResult = MutableLiveData<Boolean>()
     val syncResult : LiveData<Boolean>
         get() = _syncResult
-    private var _syncErrorCode = -1
-    val syncErrorCode: Int
-        get() = _syncErrorCode
+    private var _errorCode = -1
+    val errorCode: Int
+        get() = _errorCode
 
 
     init {
@@ -42,6 +42,8 @@ class DeviceSyncViewModel(private val repo: DeviceInfoRepository) : ViewModel() 
                 Log.d(TAG, "list.size: ${list.size}")
 
             } catch (e: Exception) {
+//                _errorCode = ERROR_CODE_EXCEPTION
+//                _onlineList.value = null
                 Log.d(TAG, "e.message: ${e.message}")
             }
         }
@@ -49,40 +51,43 @@ class DeviceSyncViewModel(private val repo: DeviceInfoRepository) : ViewModel() 
     }
 
     fun resetErrorCode() {
-        _syncErrorCode = -1
+        _errorCode = -1
     }
 
     fun synFace(people: People, ipList: ArrayList<String>) {
         viewModelScope.launch {
             try {
                 for (ip in ipList) {
+                    Log.d(TAG, "[Enter] ip: $ip ")
+
                     val repository = EditorRepository(ip)
                     val response = repository.requestAddPerson(createAddRequestBody(people))
                     val isSuccess = isAddSuccess(response)
                     if (!isSuccess) {
-                        val isWorkIdExist =
-                            response.detail == "arstack error, 548(Workid is already exist)"
+                        val isWorkIdExist = response.detail == "arstack error, 548(Workid is already exist)"
                         if (isWorkIdExist) {
 //                        Log.d(TAG, "[Enter] work id exists")
-                            _syncErrorCode = ERROR_CODE_WORK_ID_EXISTS
+                            _errorCode = ERROR_CODE_WORK_ID_EXISTS
                             _syncResult.value = false
                             break
                         } else {
-                            _syncErrorCode = ERROR_CODE_ADD_FAILED
+                            _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                            _syncResult.value = false
                         }
-                        Log.d(TAG, "[Enter] sync failed -> ip: $ip ")
 
-                    } else {
-                        Log.d(TAG, "[Enter] sync success -> ip: $ip ")
+                        Log.d(TAG, "[Enter] sync failed -> ip: $ip")
 
+                    }
+                    else {
+                        Log.d(TAG, "[Enter] sync success -> ip: $ip")
                     }
                 }
                 _syncResult.value = true
 
             } catch (e: Exception) {
+                _errorCode = ERROR_CODE_EXCEPTION
                 _syncResult.value = false
-                _syncErrorCode = ERROR_CODE_ADD_FAILED
-                Log.d(TAG, "e.message: ${e.message}")
+                Log.d(TAG, "[Exception] e.message: ${e.message}")
             }
         }
     }

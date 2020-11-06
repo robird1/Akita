@@ -70,9 +70,9 @@ interface ApiService {
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(logger)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
                 .build()
             return Retrofit.Builder()
                 .baseUrl(baseUrl)

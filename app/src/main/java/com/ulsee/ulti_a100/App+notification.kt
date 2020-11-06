@@ -73,9 +73,9 @@ fun App.listenNotification() {
                         continue
                     }
 
-                    Log.d(TAG, "listenNotification $key, recordCount= ${records.recordCount}, size=${records.data.size}")
+                    Log.d(TAG, "listenNotification $key, recordCount= ${records.recordCount}, size=${records.data?.size}")
 
-                    if (records.data.isNotEmpty()) {
+                    if (records.data != null && records.data!!.isNotEmpty()) {
                         for (notification in records.data) {
                             Log.d(TAG, "listenNotification $key, do notify {notifiaction.timestamp}")
                             doNotify(notification)
@@ -86,7 +86,7 @@ fun App.listenNotification() {
                     Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
                 } catch (exception: HttpException) {
                     Log.d(TAG, "listenNotification, $key HttpException: "+ exception.message)
-                } catch (excception: Exception) {
+                } catch (exception: Exception) {
                     Log.d(TAG, "listenNotification, $key Exception: "+ exception.message)
                 }
             }

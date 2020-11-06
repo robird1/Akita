@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.ulsee.ulti_a100.utils.Event
 import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.model.Device
+import com.ulsee.ulti_a100.ui.record.DeviceStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,6 +14,7 @@ private val TAG = DeviceListViewModel::class.java.simpleName
 const val ERROR_CODE_NAME_EXISTS = 1000
 const val ERROR_CODE_DEVICE_PAIRED = 1001
 const val ERROR_CODE_CONNECTION_FAILED = 1002
+const val POLLING_INTERVAL = 3000L
 
 class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewModel() {
     private var _deviceList = MutableLiveData<List<Device>>()
@@ -31,6 +33,10 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
     private var _deleteDeviceResult = MutableLiveData<Event<Boolean>>()
     val deleteDeviceResult : LiveData<Event<Boolean>>
         get() = _deleteDeviceResult
+
+    private var _deviceStatus = MutableLiveData<DeviceStatus>()
+    val deviceStatus: LiveData<DeviceStatus>
+        get() = _deviceStatus
 
 
     init {
@@ -66,22 +72,23 @@ class DeviceListViewModel(private val repository: DeviceInfoRepository) : ViewMo
         _addDeviceErrorCode = -1
     }
 
-    fun getConnectionStatus(url: String, position: Int, viewHolder: ViewHolder) {
+    fun getConnectionStatus(device: Device) {
         val job = viewModelScope.launch  {
             while(true) {
-                var isConnected: Boolean
                 try {
-                    val deviceInfo = repository.requestDeviceInfo(url)
-                    isConnected = isDeviceOnline(deviceInfo)
+                    val deviceInfo = repository.requestDeviceInfo(device.getIP())
+                    val isOnline = isDeviceOnline(deviceInfo)
+                    if (isOnline) {
+                        _deviceStatus.value = DeviceStatus(deviceInfo.data.mac, true)
+                    } else {
+                        _deviceStatus.value = DeviceStatus(device.getMAC(), false)
+                    }
 
                 } catch (e: Exception) {
-                    isConnected = false
+                    _deviceStatus.value = DeviceStatus(device.getMAC(), false)
                 }
 
-                Log.d(TAG, "isConnected: $isConnected position: $position")
-
-                viewHolder.displayConnectionStatus(isConnected)
-                delay(3000)
+                delay(POLLING_INTERVAL)
             }
         }
         jobList.add(job)

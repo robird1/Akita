@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.ulti_a100.R
@@ -23,7 +24,7 @@ open class DeviceListAdapter(private val viewModel: DeviceListViewModel) : Recyc
     override fun getItemCount(): Int = this.deviceList.size
 
     override fun onBindViewHolder(holder: RecordViewHolder, position: Int) {
-        holder.bind(deviceList[position], position)
+        holder.bind(deviceList[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordViewHolder {
@@ -43,26 +44,38 @@ open class RecordViewHolder(itemView: View, private val viewModel: DeviceListVie
     private var deviceID = ""
 
     init {
+        observeConnectionStatus()
+        configOnClickListener()
+    }
+
+    private fun observeConnectionStatus() {
+        val lifecycleOwner = itemView.context as LifecycleOwner
+        viewModel.deviceStatus.observe(lifecycleOwner, { response ->
+            if (response.MAC == device?.getMAC()) {
+                displayConnectionStatus(response.isConnected)
+            }
+        })
+    }
+
+    private fun configOnClickListener() {
         itemView.setOnClickListener {
             if (connectedView.visibility == View.VISIBLE) {
-                device?.let {
-                    itemView.findNavController().navigate(getNavigateAction())
-                }
+                device?.let { itemView.findNavController().navigate(getNavigateAction()) }
             } else {
                 Toast.makeText(itemView.context, "Device is offline", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    fun bind(device: Device, position: Int) {
+    fun bind(device: Device) {
         this.device = device
         deviceID = device.getID()
         nameTV?.text = device.getID()
         ipTV?.text = device.getIP()
-        viewModel.getConnectionStatus(device.getIP(), position, this)
+        viewModel.getConnectionStatus(device)
     }
 
-    fun displayConnectionStatus(isConnected: Boolean) {
+    private fun displayConnectionStatus(isConnected: Boolean) {
         connectedView.visibility = if (isConnected) View.VISIBLE else View.GONE
         notConnectedView.visibility = if (!isConnected) View.VISIBLE else View.GONE
     }

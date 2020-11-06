@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.ulti_a100.R
@@ -30,7 +31,7 @@ class DeviceListAdapter(private val viewModel: DeviceListViewModel, private val 
     override fun getItemCount(): Int = this.deviceList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(deviceList[position], position)
+        holder.bind(deviceList[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,12 +47,22 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
     private val hintTV = itemView.findViewById<TextView>(R.id.textView_hint)
     private val connectedView = itemView.findViewById<View>(R.id.view_connected)
     private val notConnectedView = itemView.findViewById<View>(R.id.view_connection_status)
-    private var mPopup: PopupMenu
+    private lateinit var mPopup: PopupMenu
     var device: Device? = null
     private var deviceID = ""
     private var deviceIP = ""
 
     init {
+        initOptionMenu()
+        observeConnectionStatus()
+
+        val thumbLayout = itemView.findViewById<View>(R.id.layout_thumb)
+        thumbLayout.setOnClickListener {
+            showLiveStreaming(itemView)
+        }
+    }
+
+    private fun initOptionMenu() {
         val menuLayout = itemView.findViewById<View>(R.id.layout_menu)
         mPopup = PopupMenu(itemView.context, menuLayout)
         mPopup.menu.add("a").setTitle("Edit Device Info")
@@ -82,23 +93,26 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
             Log.i(javaClass.name, "on menu layout clicked")
             mPopup.show()
         }
-
-        val thumbLayout = itemView.findViewById<View>(R.id.layout_thumb)
-        thumbLayout.setOnClickListener {
-            showLiveStreaming(itemView)
-        }
     }
 
+    private fun observeConnectionStatus() {
+        val lifecycleOwner = itemView.context as LifecycleOwner
+        viewModel.deviceStatus.observe(lifecycleOwner, { response ->
+            if (response.MAC == device?.getMAC()) {
+                displayConnectionStatus(response.isConnected)
+            }
+        })
+    }
 
-    fun bind(device: Device, position: Int) {
+    fun bind(device: Device) {
         this.device = device
         deviceID = device.getID()
         deviceIP = device.getIP()
         nameTV?.text = device.getID()
-        viewModel.getConnectionStatus(device.getIP(), position, this)
+        viewModel.getConnectionStatus(device)
     }
 
-    fun displayConnectionStatus(isConnected: Boolean) {
+    private fun displayConnectionStatus(isConnected: Boolean) {
         connectedView.visibility = if (isConnected) View.VISIBLE else View.GONE
         notConnectedView.visibility = if (!isConnected) View.VISIBLE else View.GONE
         val ctx = itemView.context

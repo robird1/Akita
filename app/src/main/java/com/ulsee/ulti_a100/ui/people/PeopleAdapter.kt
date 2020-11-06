@@ -39,6 +39,12 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
         notifyDataSetChanged()
     }
 
+    fun clearList() {
+        faceImageCacheMap.clear()
+        peopleList.clear()
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = this.peopleList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -135,7 +141,7 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
                 val cachedImgBase64 = faceImageCacheMap[people.personId]
                 if (cachedImgBase64 == null) {
                     clearFaceView()
-                    viewModel.queryPerson(people.personId)
+                    viewModel.queryPersonFace(people.personId)
                 } else {
                     displayFaceView(cachedImgBase64)
                     data?.faceImg = cachedImgBase64

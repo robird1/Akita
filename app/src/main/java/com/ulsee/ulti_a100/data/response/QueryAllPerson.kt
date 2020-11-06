@@ -2,7 +2,7 @@ package com.ulsee.ulti_a100.data.response
 
 data class QueryAllPerson(
     val command: Int,
-    val `data`: List<AllPerson>,
+    val `data`: List<AllPerson>?,
     val detail: String,
     val status: Int,
     val transmit_cast: Int

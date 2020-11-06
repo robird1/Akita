@@ -12,7 +12,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 private val TAG = EditorViewModel::class.java.simpleName
 const val ERROR_CODE_WORK_ID_EXISTS = 2000
-const val ERROR_CODE_ADD_FAILED = 2001
+const val ERROR_CODE_API_NOT_SUCCESS = 2001
+const val ERROR_CODE_EXCEPTION = 2002
 
 class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
     private var _addResult = MutableLiveData<Boolean>()
@@ -21,9 +22,9 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
     private var _editResult = MutableLiveData<Boolean>()
     val editResult : LiveData<Boolean>
         get() = _editResult
-    private var _addPeopleErrorCode = -1
-    val addPeopleErrorCode: Int
-        get() = _addPeopleErrorCode
+    private var _errorCode = -1
+    val errorCode: Int
+        get() = _errorCode
 
 
     fun addPeople(people: People) {
@@ -33,14 +34,16 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
                 val isSuccess = isAddSuccess(response)
                 if (!isSuccess) {
                     val isWorkIdExist = response.detail == "arstack error, 548(Workid is already exist)"
-                    if (isWorkIdExist) {
-//                        Log.d(TAG, "[Enter] work id exists")
-                        _addPeopleErrorCode = ERROR_CODE_WORK_ID_EXISTS
+                    _errorCode = if (isWorkIdExist) {
+                        ERROR_CODE_WORK_ID_EXISTS
+                    } else {
+                        ERROR_CODE_API_NOT_SUCCESS
                     }
                 }
                 _addResult.value = isSuccess
 
             } catch (e: Exception) {
+                _errorCode = ERROR_CODE_EXCEPTION
                 _addResult.value = false
                 Log.d(TAG, "e.message: ${e.message}")
             }
@@ -51,9 +54,14 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = repository.requestModifyPerson(createEditRequestBody(people))
-                _editResult.value = isModifySuccess(response)
+                val isSuccess = isModifySuccess(response)
+                if (!isSuccess) {
+                    _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                }
+                _editResult.value  = isSuccess
 
             } catch (e: Exception) {
+                _errorCode = ERROR_CODE_EXCEPTION
                 _editResult.value = false
                 Log.d(TAG, "e.message: ${e.message}")
             }
@@ -61,7 +69,7 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
     }
 
     fun resetErrorCode() {
-        _addPeopleErrorCode = -1
+        _errorCode = -1
     }
 
     private fun isAddSuccess(response: AddPerson) = response.status == 0 && response.detail == "success"

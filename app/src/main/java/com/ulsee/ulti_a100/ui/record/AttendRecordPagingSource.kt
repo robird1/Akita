@@ -13,7 +13,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-//private const val RECORD_START_PAGE_INDEX = 1
 private const val RECORD_QUERY_COUNT = 10
 private val TAG = AttendRecordPagingSource::class.java.simpleName
 
@@ -30,7 +29,12 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository, p
 //            Log.d(TAG, "record size: " + records.recordCount)
             lastStartId = startId
 
-            LoadResult.Page(data = getSortedList(records), prevKey = getPreviousKey(startId), nextKey = getNextKey(startId))
+            if (records.data != null) {
+                LoadResult.Page(data = getSortedList(records), prevKey = getPreviousKey(startId), nextKey = getNextKey(startId))
+            } else {
+                // empty list
+                LoadResult.Page(data = listOf(), prevKey = null, nextKey = null)
+            }
 
         } catch (exception: IOException) {
             Log.d(TAG, "IOException: "+ exception.message)
@@ -45,35 +49,56 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository, p
     }
 
     private fun getSortedList(records: QueryAttendRecord): List<AttendRecord> {
-        return records.data.sortedByDescending {
+        return records.data!!.sortedByDescending {
             parseTime(it.timestamp)?.time
         }
     }
 
     private fun getRequestCount(startId: Int): Int {
-        return if (startId != -1) {
+        return if (startId != -1) {           // the remaining data count is more than RECORD_QUERY_COUNT
             RECORD_QUERY_COUNT
-        } else {
-            lastStartId
+
+        } else {                              // the remaining data count is less than RECORD_QUERY_COUNT
+
+            if (lastStartId != -1) {          // the last page of the list data
+                lastStartId
+            } else {                         // the total count of the list data is less than RECORD_QUERY_COUNT
+                totalCount
+            }
         }
     }
 
-    private fun getPreviousKey(startId: Int) =
-        if (startId == getDefaultStartIndex()) null else startId + RECORD_QUERY_COUNT
+    private fun getPreviousKey(startId: Int): Int? {
+//        if (startId == getDefaultStartIndex()) null else startId + RECORD_QUERY_COUNT
+        return if (startId == -1) {
+            if (lastStartId != -1) {          // the last page of the list data
+                lastStartId
+            } else {                         // the total count of the list data is less than RECORD_QUERY_COUNT
+                null
+            }
+        } else if (startId == totalCount - RECORD_QUERY_COUNT) {
+            null
+        } else {
+            startId + RECORD_QUERY_COUNT
+        }
+    }
 
     private fun getNextKey(startId: Int): Int? {
         if (startId == -1) return null
         return if (startId > RECORD_QUERY_COUNT) { startId - RECORD_QUERY_COUNT } else -1
     }
 
-    private fun getDefaultStartIndex() = totalCount - RECORD_QUERY_COUNT
+    private fun getDefaultStartIndex(): Int {
+        val index = totalCount - RECORD_QUERY_COUNT
+        return if (index > 0) index else -1
+    }
 
 //    private fun createJsonRequestBody(vararg params: Pair<String, Int>) =
 //        JSONObject(mapOf(*params)).toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
     private fun createJsonRequestBody(vararg params: Pair<String, Int>): RequestBody {
         val tmp = JSONObject(mapOf(*params, "needImg" to true)).toString()
-        Log.d(TAG, "JSONObject toString: $tmp")
+//        Log.d(TAG, "JSONObject toString: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 

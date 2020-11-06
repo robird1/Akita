@@ -34,7 +34,7 @@ class DeviceSyncAdapter: RecyclerView.Adapter<DeviceSyncAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_list_device_select, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_list_sync_device_select, parent, false)
         return ViewHolder(view)
     }
 

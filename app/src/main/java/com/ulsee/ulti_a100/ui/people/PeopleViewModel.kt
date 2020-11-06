@@ -3,7 +3,6 @@ package com.ulsee.ulti_a100.ui.people
 import android.util.Log
 import androidx.lifecycle.*
 import com.ulsee.ulti_a100.data.response.*
-import com.ulsee.ulti_a100.model.People
 import com.ulsee.ulti_a100.utils.Event
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -17,9 +16,6 @@ class PeopleViewModel(private val repository: PeopleRepository) : ViewModel() {
     private var _peopleList = MutableLiveData<List<AllPerson>>()
     val peopleList : LiveData<List<AllPerson>>
         get() = _peopleList
-//    private var _base64Face = MutableLiveData<String>()
-//    val base64Face : LiveData<String>
-//        get() = _base64Face
     private var _queryResponse = MutableLiveData<QueryFaceResponse>()
     val queryFaceResponse : LiveData<QueryFaceResponse>
         get() = _queryResponse
@@ -27,29 +23,34 @@ class PeopleViewModel(private val repository: PeopleRepository) : ViewModel() {
     private var _result = MutableLiveData<Event<Boolean>>()
     val result : LiveData<Event<Boolean>>
         get() = _result
+    private var _errorCode = -1
+    val errorCode: Int
+        get() = _errorCode
+
 //    private var _searchPeopleList = MutableLiveData<Event<List<AllPerson>>>()
 //    val searchPeopleList : LiveData<Event<List<AllPerson>>>
 //        get() = _searchPeopleList
 
 
     init {
-        Log.d(TAG, "[Enter] init() -> loadRecord()")
+        Log.d(TAG, "[Enter] init()")
         loadRecord()
     }
 
     fun loadRecord() {
         viewModelScope.launch {
             try {
-//                _peopleList.value = repository.loadPeople()
                 val response= repository.requestAllPerson(createQueryAllRequestBody())
                 if (isQueryAllSuccess(response)) {
-                    _peopleList.value = response.data
+                    _peopleList.value = response.data       // response.data == null -> empty list
                 } else {
-                    // TODO
+                    _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                    _peopleList.value = null
                 }
             } catch (e: Exception) {
+                _errorCode = ERROR_CODE_EXCEPTION
+                _peopleList.value = null
                 Log.d(TAG, "[Enter] Exception: ${e.message}")
-                // TODO
             }
         }
     }
@@ -59,21 +60,21 @@ class PeopleViewModel(private val repository: PeopleRepository) : ViewModel() {
             try{
 
                 val response = repository.requestDeletePerson(createDeleteRequestBody(people))
-                _result.value = Event(isDeleteSuccess(response))
-//                if (isDeleteSuccess(response)) {
-//                    _result.value = Event(true)
-//                } else {
-//                    _result.value = Event(false)
-//                }
+                val isSuccess = isDeleteSuccess(response)
+                if (!isSuccess) {
+                    _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                }
+                _result.value = Event(isSuccess)
 
             } catch (e: Exception) {
                 Log.d(TAG, "[Enter] Exception: ${e.message}")
+                _errorCode = ERROR_CODE_EXCEPTION
                 _result.value = Event(false)
             }
         }
     }
 
-    fun queryPerson(id: String) {
+    fun queryPersonFace(id: String) {
         viewModelScope.launch {
             try {
                 val response = repository.requestPerson(createQueryRequestBody(id))
@@ -82,16 +83,24 @@ class PeopleViewModel(private val repository: PeopleRepository) : ViewModel() {
                     if (response.data.faces != null) {
                         val imgBase64 = response.data.faces[0].orgimg
                         _queryResponse.value = QueryFaceResponse(response.data.personId, imgBase64)
+                    } else {
+                        // do nothing
                     }
                 } else {
                     // do nothing
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "[Enter] Exception: ${e.message}")
+                // do nothing
             }
         }
 
     }
+
+    fun resetErrorCode() {
+        _errorCode = -1
+    }
+
 
 //    fun searchPeople(keyword: String) {
 //        viewModelScope.launch {

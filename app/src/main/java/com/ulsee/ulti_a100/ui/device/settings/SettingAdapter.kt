@@ -47,11 +47,7 @@ class SettingAdapter(private val viewModel: SettingViewModel, private val fragme
         }
 
         fun bind(position: Int) {
-//            Log.d(TAG, "[Enter] bind() position: $position")
-//            Log.d(TAG, "config.language: ${config?.language}")
-//            config?.let {
-                AttributeInstance(position, config).setValue(itemView)
-//            }
+            AttributeInstance(position, config).setValue(itemView)
         }
     }
 

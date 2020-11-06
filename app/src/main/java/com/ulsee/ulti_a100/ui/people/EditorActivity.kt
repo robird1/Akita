@@ -112,12 +112,18 @@ class EditorActivity: AppCompatActivity() {
                 setResult(RESULT_OK, Intent().putExtra("mode", "add"))
                 finish()
             } else {
-                if (viewModel.addPeopleErrorCode == ERROR_CODE_WORK_ID_EXISTS) {
-                    Toast.makeText(this, "The input work ID already exists", Toast.LENGTH_SHORT).show()
-                    viewModel.resetErrorCode()
-                } else {
-                    Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show()
+                when (viewModel.errorCode) {
+                    ERROR_CODE_WORK_ID_EXISTS -> {
+                        Toast.makeText(this, "The input work ID already exists", Toast.LENGTH_SHORT).show()
+                    }
+                    ERROR_CODE_API_NOT_SUCCESS -> {
+                        Toast.makeText(this, "Error($ERROR_CODE_API_NOT_SUCCESS)", Toast.LENGTH_SHORT).show()
+                    }
+                    else ->  {
+                        Toast.makeText(this, "Error($ERROR_CODE_EXCEPTION)", Toast.LENGTH_SHORT).show()
+                    }
                 }
+                viewModel.resetErrorCode()
             }
         })
     }
@@ -130,7 +136,15 @@ class EditorActivity: AppCompatActivity() {
                 setResult(RESULT_OK, Intent().putExtra("mode", "edit"))
                 finish()
             } else {
-                Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show()
+                when (viewModel.errorCode) {
+                    ERROR_CODE_API_NOT_SUCCESS -> {
+                        Toast.makeText(this, "Error($ERROR_CODE_API_NOT_SUCCESS)", Toast.LENGTH_SHORT).show()
+                    }
+                    else ->  {
+                        Toast.makeText(this, "Error($ERROR_CODE_EXCEPTION)", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                viewModel.resetErrorCode()
             }
         })
     }
