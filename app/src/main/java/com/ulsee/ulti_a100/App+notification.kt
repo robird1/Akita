@@ -27,6 +27,7 @@ class DeviceNotificationInfo {
     var minTemp = 0.0
     var maxTemp = 0.0
     var deferred : Deferred<Unit>? = null
+    var temperatureUnit = "C"
 }
 
 fun App.listenNotification() {
@@ -73,6 +74,7 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
         val deviceConfig = deviceSettingRepository.getDeviceConfig()
         notificationInfoMap[url]!!.minTemp = deviceConfig.data.FaceUIConfig.minBodyTemperature
         notificationInfoMap[url]!!.maxTemp = deviceConfig.data.FaceUIConfig.maxBodyTemperature
+        notificationInfoMap[url]!!.temperatureUnit = deviceConfig.data.FaceUIConfig.temperatureUnit
         isConnected = true
 
     } catch (e: Exception) {
@@ -112,10 +114,12 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
 
         if (records.data != null && records.data.isNotEmpty()) {
             for (notification in records.data) {
-                val temp = notification.bodyTemperature.toDouble()
-                val shouldNotify = temp < notificationInfoMap[key]!!.minTemp || temp > notificationInfoMap[key]!!.maxTemp
-                Log.d(TAG, "listenNotification $key, shouldNotify = $shouldNotify {notifiaction.timestamp}")
-                if (shouldNotify) {
+                var temp = notification.bodyTemperature.toDouble()
+                if (notificationInfoMap[key]!!.temperatureUnit == "F") temp = temp * 9 /5 + 32
+//                val isTempTooLow = temp < notificationInfoMap[key]!!.minTemp
+                val isTempTooHigh = temp > notificationInfoMap[key]!!.maxTemp
+                Log.d(TAG, "listenNotification $key, is temp too high = $isTempTooHigh, temp = $temp, temperatureUnit = ${notificationInfoMap[key]!!.temperatureUnit}, max = ${notificationInfoMap[key]!!.maxTemp} {notifiaction.timestamp}")
+                if (isTempTooHigh) {
                     doNotify(notification)
                 }
             }
