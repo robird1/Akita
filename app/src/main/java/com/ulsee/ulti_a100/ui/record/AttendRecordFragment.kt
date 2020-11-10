@@ -1,10 +1,9 @@
 package com.ulsee.ulti_a100.ui.record
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,6 +14,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ulsee.ulti_a100.MainActivity
+import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.databinding.FragmentAttendRecordsBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -36,19 +36,38 @@ class AttendRecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAttendRecordsBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this, AttendRecordFactory(AttendRecordRepository(args.url)))
-            .get(AttendRecordViewModel::class.java)
-
+        initViewModel()
         initSwipeRefreshView()
         initRecyclerView()
         initAdapter()
         binding.retryButton.setOnClickListener { adapter.retry() }
+        setHasOptionsMenu(true)
         observeRecordCount()
         observeTemperatureUnit()
+        observeClearRecords()
 
         (activity as MainActivity).setTitle("Records")
 
         return binding.root
+    }
+
+    private fun initViewModel() {
+        viewModel = ViewModelProvider(this, AttendRecordFactory(AttendRecordRepository(args.url)))
+            .get(AttendRecordViewModel::class.java)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.attend_record_option_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.clear_all -> {
+                binding.progressBar.isVisible = true
+                showClearDialog()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initRecyclerView() {
@@ -142,6 +161,40 @@ class AttendRecordFragment : Fragment() {
             viewModel.invalidatePagingSource()
             viewModel.loadRecordCount()
         }
+    }
+
+    private fun showClearDialog() {
+        AlertDialog.Builder(requireContext())
+            .setMessage("Clear all records?")
+            .setPositiveButton(getString(R.string.yes))
+            { _, _ ->
+                clearAllRecords()
+            }
+            .setNegativeButton(getString(R.string.no)
+            ) { dialog, _ ->
+                dialog.dismiss()
+                binding.progressBar.isVisible = false
+            }
+            .setCancelable(false)
+            .create()
+            .show()
+    }
+
+    private fun clearAllRecords() {
+        viewModel.clearAllRecords()
+    }
+
+    private fun observeClearRecords() {
+        viewModel.clearResult.observe(viewLifecycleOwner, { clearResult ->
+            binding.progressBar.isVisible = false
+            if (clearResult) {
+                viewModel.invalidatePagingSource()
+                Toast.makeText(requireContext(), "clear success", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Error(${viewModel.errorCode})", Toast.LENGTH_SHORT).show()
+                viewModel.resetErrorCode()
+            }
+        })
     }
 
 }

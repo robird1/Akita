@@ -7,7 +7,7 @@ import com.ulsee.ulti_a100.data.response.GetDeviceInfo
 import com.ulsee.ulti_a100.model.Device
 import com.ulsee.ulti_a100.model.People
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -27,72 +27,91 @@ class DeviceSyncViewModel(private val repo: DeviceInfoRepository) : ViewModel() 
 
 
     init {
+        getOnlineDevices()
+    }
+
+    private fun getOnlineDevices() {
         viewModelScope.launch {
-            try {
-                val list = ArrayList<Device>()
-                for (i in repo.loadDevices()) {
-                    val deviceInfo = repo.requestDeviceInfo(i.getIP())
-                    val isConnected = isDeviceOnline(deviceInfo)
-                    if (isConnected) {
-                        list.add(i)
+            val deferredList = repo.loadDevices().map { device ->
+                async(Dispatchers.IO) {
+                    try {
+                        Log.d(TAG, "[Before] repo.requestDeviceInfo() ip: ${device.getIP()}")
+                        val deviceInfo = repo.requestDeviceInfo(device.getIP())
+                        Log.d(TAG, "[After] repo.requestDeviceInfo() ip: ${device.getIP()}")
+                        if (isDeviceOnline(deviceInfo)) return@async device
+                        else return@async null
+                    } catch (e: Exception) {
+                        Log.d(TAG, "e.message: ${e.message}")
+                        return@async null
                     }
                 }
-                _onlineList.value = list
+            }
+            _onlineList.value = obtainOnlineList(deferredList)
+        }
+    }
 
-                Log.d(TAG, "list.size: ${list.size}")
+    private suspend fun obtainOnlineList(deferredList: List<Deferred<Device?>>): ArrayList<Device> {
+        val list = ArrayList<Device>()
+        for (i in deferredList) {
+            val device = i.await()
+            device?.let { list.add(it) }
+//            if (device != null) {
+//                Log.d(TAG, "device != null ip: ${device.getIP()}")
+//                list.add(device)
+//            } else {
+//                Log.d(TAG, "device == null")
+//            }
+        }
+        return list
+    }
 
-            } catch (e: Exception) {
-//                _errorCode = ERROR_CODE_EXCEPTION
-//                _onlineList.value = null
-                Log.d(TAG, "e.message: ${e.message}")
+    fun synFace(people: People, ipList: ArrayList<String>) {
+        viewModelScope.launch {
+            val deferredList = ipList.map { ip ->
+                async(Dispatchers.IO) {
+                    Log.d(TAG, "[Enter] ip: $ip ")
+                    requestAddPerson(ip, people)
+                }
+            }
+            deferredList.awaitAll()
+            _syncResult.value = true
+        }
+    }
+
+    private suspend fun requestAddPerson(ip: String,  people: People) {
+        Log.d(TAG, "[Before] repository.requestAddPerson")
+        try {
+            val repository = EditorRepository(ip)
+            val response = repository.requestAddPerson(createAddRequestBody(people))
+            val isSuccess = isAddSuccess(response)
+            if (!isSuccess) {
+                withContext(Dispatchers.Main) {
+                    if (isWorkIdExist(response)) {
+                        _errorCode = ERROR_CODE_WORK_ID_EXISTS
+                        _syncResult.value = false
+                    } else {
+                        _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                        _syncResult.value = false
+                    }
+                }
+                Log.d(TAG, "[Enter] sync failed -> ip: $ip")
+            } else {
+                Log.d(TAG, "[Enter] sync success -> ip: $ip")
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "[Exception] e.message: ${e.message}")
+            withContext(Dispatchers.Main) {
+                _errorCode = ERROR_CODE_EXCEPTION
+                _syncResult.value = false
             }
         }
-
     }
 
     fun resetErrorCode() {
         _errorCode = -1
     }
 
-    fun synFace(people: People, ipList: ArrayList<String>) {
-        viewModelScope.launch {
-            try {
-                for (ip in ipList) {
-                    Log.d(TAG, "[Enter] ip: $ip ")
-
-                    val repository = EditorRepository(ip)
-                    val response = repository.requestAddPerson(createAddRequestBody(people))
-                    val isSuccess = isAddSuccess(response)
-                    if (!isSuccess) {
-                        val isWorkIdExist = response.detail == "arstack error, 548(Workid is already exist)"
-                        if (isWorkIdExist) {
-//                        Log.d(TAG, "[Enter] work id exists")
-                            _errorCode = ERROR_CODE_WORK_ID_EXISTS
-                            _syncResult.value = false
-                            break
-                        } else {
-                            _errorCode = ERROR_CODE_API_NOT_SUCCESS
-                            _syncResult.value = false
-                        }
-
-                        Log.d(TAG, "[Enter] sync failed -> ip: $ip")
-
-                    }
-                    else {
-                        Log.d(TAG, "[Enter] sync success -> ip: $ip")
-                    }
-                }
-                _syncResult.value = true
-
-            } catch (e: Exception) {
-                _errorCode = ERROR_CODE_EXCEPTION
-                _syncResult.value = false
-                Log.d(TAG, "[Exception] e.message: ${e.message}")
-            }
-        }
-    }
-
-
+    private fun isWorkIdExist(response: AddPerson) = response.detail == "arstack error, 548(Workid is already exist)"
     private fun isDeviceOnline(deviceInfo: GetDeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
     private fun isAddSuccess(response: AddPerson) = response.status == 0 && response.detail == "success"
 

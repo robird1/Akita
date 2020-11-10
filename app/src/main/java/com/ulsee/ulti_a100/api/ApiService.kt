@@ -62,6 +62,8 @@ interface ApiService {
     @POST("api/v1/face/setUIConfig")
     suspend fun setDeviceConfig(@Body params: RequestBody): SetUIConfig
 
+    @POST("api/v1/face/clearAttendRecord")
+    suspend fun clearAttendRecord(@Body params: RequestBody): ClearAttendRecord
 
     companion object {
         fun create(baseUrl: String): ApiService {

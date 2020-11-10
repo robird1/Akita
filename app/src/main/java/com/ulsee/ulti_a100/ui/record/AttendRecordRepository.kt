@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.ulsee.ulti_a100.api.ApiService
 import com.ulsee.ulti_a100.data.response.AttendRecord
+import com.ulsee.ulti_a100.data.response.ClearAttendRecord
 import com.ulsee.ulti_a100.data.response.GetAttendRecordCount
 import com.ulsee.ulti_a100.data.response.QueryAttendRecord
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +20,10 @@ class AttendRecordRepository(val url: String) {
 
     suspend fun requestAttendRecord(requestBody: RequestBody): QueryAttendRecord {
         return ApiService.create(url).requestAttendRecord(requestBody)
+    }
+
+    suspend fun clearAttendRecord(requestBody: RequestBody): ClearAttendRecord {
+        return ApiService.create(url).clearAttendRecord(requestBody)
     }
 
     fun getSearchResultStream(totalCount: Int): Flow<PagingData<AttendRecord>> {

@@ -12,6 +12,9 @@ import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.databinding.ActivityDeviceSyncBinding
 import com.ulsee.ulti_a100.model.Device
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 private val TAG = DeviceSyncActivity::class.java.simpleName
 
@@ -53,26 +56,15 @@ class DeviceSyncActivity: AppCompatActivity() {
             val people = AttributeType.getAttributeData()
             viewModel.synFace(people, selectedIPList)
         }
-
     }
 
     private fun observeOnlineList() {
         viewModel.onlineList.observe(this, { list ->
-//            if (list != null) {
+            if (list.isNotEmpty()) {
                 Log.d(TAG, "[Enter] observeOnlineList size: ${list.size}")
                 binding.progressView.visibility = View.INVISIBLE
                 (recyclerView.adapter as DeviceSyncAdapter).setList(list)
-//            } else {
-//                when (viewModel.errorCode) {
-//                    ERROR_CODE_API_NOT_SUCCESS -> {
-//                        Toast.makeText(this, "Error($ERROR_CODE_API_NOT_SUCCESS)", Toast.LENGTH_SHORT).show()
-//                    }
-//                    else ->  {
-//                        Toast.makeText(this, "Error($ERROR_CODE_EXCEPTION)", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//                viewModel.resetErrorCode()
-//            }
+            }
         })
     }
 

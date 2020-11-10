@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.ulsee.ulti_a100.data.response.AttendRecord
+import com.ulsee.ulti_a100.data.response.ClearAttendRecord
 import com.ulsee.ulti_a100.data.response.GetAttendRecordCount
 import com.ulsee.ulti_a100.data.response.getUIConfig
 import com.ulsee.ulti_a100.ui.device.settings.SettingRepository
@@ -12,6 +13,9 @@ import com.ulsee.ulti_a100.ui.people.ERROR_CODE_API_NOT_SUCCESS
 import com.ulsee.ulti_a100.ui.people.ERROR_CODE_EXCEPTION
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 private val TAG = AttendRecordViewModel::class.java.simpleName
 
@@ -22,6 +26,9 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
     private var _temperatureUnit = MutableLiveData<String>()
     val temperatureUnit: LiveData<String>
         get() = _temperatureUnit
+    private var _clearResult = MutableLiveData<Boolean>()
+    val clearResult: LiveData<Boolean>
+        get() = _clearResult
 
     private var currentSearchResult: Flow<PagingData<AttendRecord>>? = null
     private var totalCount = 0
@@ -92,7 +99,23 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
         }
     }
 
-    private fun isQuerySuccess(response: getUIConfig) = response.status == 0 && response.detail == "success"
+    fun clearAllRecords() {
+        viewModelScope.launch {
+            try {
+                val response = repository.clearAttendRecord(createClearRequestBody())
+                val isSuccess = isClearSuccess(response)
+                if (isSuccess) {
+                    _clearResult.value = true
+                } else {
+                    _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                    _clearResult.value = false
+                }
+            } catch (e: Exception) {
+                _errorCode = ERROR_CODE_EXCEPTION
+                _clearResult.value = false
+            }
+        }
+    }
 
     fun getRecordCount(): Int = totalCount
 
@@ -100,7 +123,14 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
         _errorCode = -1
     }
 
+    private fun isQuerySuccess(response: getUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isClearSuccess(response: ClearAttendRecord) = response.status == 0 && response.detail == "success"
     private fun isQuerySuccess(response: GetAttendRecordCount) = response.status == 0 && response.detail == "success"
+
+    private fun createClearRequestBody(): RequestBody {
+        val tmp = "{\r\n    \"clearBy\" : \"AllRecords\"\r\n}"
+        return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+    }
 
 }
 
