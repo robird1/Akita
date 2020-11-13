@@ -61,7 +61,8 @@ private class AttributeInstance(position: Int, config: FaceUIConfig?) {
         SettingAttributes.POSITION_TEMPERATURE -> Temperature(config)
         SettingAttributes.POSITION_PANEL_UI -> PanelUI(config)
         SettingAttributes.POSITION_LIGHT_MODE -> LightMode(config)
-//        SettingAttributes.POSITION_LCD_MODE -> LCDMode(config)
+        SettingAttributes.POSITION_CAPTURE -> Capture(config)
+        SettingAttributes.POSITION_TIME -> Time(config)
         SettingAttributes.POSITION_OTHERS -> Others(config)
         else -> Unknown(config)
     }
@@ -83,14 +84,15 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
     abstract fun onClick(fragment: Fragment, url: String)
 
     companion object {
-        const val ITEM_COUNT = 6
+        const val ITEM_COUNT = 8
         const val POSITION_VOLUME = 0
         const val POSITION_LANGUAGE = 1
         const val POSITION_TEMPERATURE = 2
         const val POSITION_PANEL_UI = 3
         const val POSITION_LIGHT_MODE = 4
-//        const val POSITION_LCD_MODE = 5
-        const val POSITION_OTHERS = 5
+        const val POSITION_CAPTURE = 5
+        const val POSITION_TIME = 6
+        const val POSITION_OTHERS = 7
     }
 }
 
@@ -190,18 +192,31 @@ class LightMode(config: FaceUIConfig?): SettingAttributes(config) {
     }
 }
 
+class Capture(config: FaceUIConfig?): SettingAttributes(config) {
+    override fun setValue(itemView: View) {
+        super.setValue(itemView)
+        configName?.text = "Capture Attributes"
+        configValue?.text = ""
+    }
 
-//class LCDMode(config: FaceUIConfig?): SettingAttributes(config) {
-//    override fun setValue(itemView: View) {
-//        super.setValue(itemView)
-//        configName?.text = "LCD Mode"
-//        configValue?.text = config?.lightMode.toString() ?: ""
-//    }
-//
-//    override fun onClick(fragment: Fragment, url: String) {
-//
-//    }
-//}
+    override fun onClick(fragment: Fragment, url: String) {
+        val action = SettingFragmentDirections.actionToCaptureConfig(url)
+        fragment.findNavController().navigate(action)
+    }
+}
+
+class Time(config: FaceUIConfig?): SettingAttributes(config) {
+    override fun setValue(itemView: View) {
+        super.setValue(itemView)
+        configName?.text = "Time"
+        configValue?.text = ""
+    }
+
+    override fun onClick(fragment: Fragment, url: String) {
+        val action = SettingFragmentDirections.actionToTimeSync(url)
+        fragment.findNavController().navigate(action)
+    }
+}
 
 
 class Others(config: FaceUIConfig?): SettingAttributes(config) {

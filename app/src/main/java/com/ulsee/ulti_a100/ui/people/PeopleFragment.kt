@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ulsee.ulti_a100.MainActivity
 import com.ulsee.ulti_a100.R
 import com.ulsee.ulti_a100.data.response.AllPerson
@@ -87,19 +86,11 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_ACTIVITY_EDITOR) {
             if (resultCode == Activity.RESULT_OK) {
+                if (data?.getStringExtra("mode") == "edit" &&
+                    data?.getBooleanExtra("is_face_changed", false)) {
+                    (binding.recyclerView.adapter as PeopleAdapter).removeCachedFace(position)
+                }
                 viewModel.loadRecord()
-
-//                if (data?.getStringExtra("mode") == "add") {
-//                    (binding.recyclerView.adapter as PeopleAdapter).addItem()
-//
-//                } else if (data?.getStringExtra("mode") == "edit") {
-//                    (binding.recyclerView.adapter as PeopleAdapter).editItem(position)
-//
-//                } else {
-//
-//                }
-
-//                Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show()
 
                 // close searchView after edit a record
                 (activity as MainActivity).binding.toolbar.collapseActionView()

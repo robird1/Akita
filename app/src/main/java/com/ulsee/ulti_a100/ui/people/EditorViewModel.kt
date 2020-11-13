@@ -2,9 +2,14 @@ package com.ulsee.ulti_a100.ui.people
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.ulsee.ulti_a100.data.response.AddFaces
 import com.ulsee.ulti_a100.data.response.AddPerson
+import com.ulsee.ulti_a100.data.response.DeleteFaces
 import com.ulsee.ulti_a100.data.response.ModifyPerson
 import com.ulsee.ulti_a100.model.People
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -50,21 +55,62 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
         }
     }
 
-    fun editPeople(people: People) {
+    fun editPeople(people: People, isPhotoTaken: Boolean) {
         viewModelScope.launch {
-            try {
-                val response = repository.requestModifyPerson(createEditRequestBody(people))
-                val isSuccess = isModifySuccess(response)
-                if (!isSuccess) {
+            val modifyInfoResult = async(Dispatchers.IO) {
+                modifyInfo(people)
+            }
+            var modifyFaceResult: Deferred<Boolean>? = null
+            if (isPhotoTaken) {
+                modifyFaceResult = async(Dispatchers.IO) {
+                    modifyFace(people)
+                }
+            }
+            if (modifyInfoResult.await()) {
+                if (isPhotoTaken) {
+                    _editResult.value = modifyFaceResult!!.await()
+                } else {
+                    _editResult.value = true
+                }
+            } else {
+                _editResult.value = false
+            }
+        }
+    }
+
+    private suspend fun modifyInfo(people: People): Boolean {
+        return try {
+            val response = repository.requestModifyPerson(createEditRequestBody(people))
+            val isSuccess = isModifySuccess(response)
+            if (!isSuccess) {
+                _errorCode = ERROR_CODE_API_NOT_SUCCESS
+            }
+            isSuccess
+        } catch (e: Exception) {
+            Log.d(TAG, "e.message: ${e.message}")
+            _errorCode = ERROR_CODE_EXCEPTION
+            false
+        }
+    }
+
+    private suspend fun modifyFace(people: People): Boolean {
+        return try {
+            val response = repository.requestDeleteFace(createDeleteFaceRequest(people))
+            val isSuccess = isDeleteFaceSuccess(response)
+            if (isSuccess) {
+                val response2 = repository.requestAddFace(createAddFaceRequest(people))
+                val isSuccess2 = isAddFaceSuccess(response2)
+                if (!isSuccess2) {
                     _errorCode = ERROR_CODE_API_NOT_SUCCESS
                 }
-                _editResult.value  = isSuccess
-
-            } catch (e: Exception) {
-                _errorCode = ERROR_CODE_EXCEPTION
-                _editResult.value = false
-                Log.d(TAG, "e.message: ${e.message}")
+                isSuccess
+            } else {
+                _errorCode = ERROR_CODE_API_NOT_SUCCESS
+                false
             }
+        } catch (e: Exception) {
+            _errorCode = ERROR_CODE_EXCEPTION
+            false
         }
     }
 
@@ -74,6 +120,8 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
 
     private fun isAddSuccess(response: AddPerson) = response.status == 0 && response.detail == "success"
     private fun isModifySuccess(response: ModifyPerson) = response.status == 0 && response.detail == "success"
+    private fun isDeleteFaceSuccess(response: DeleteFaces) = response.status == 0 && response.detail == "success"
+    private fun isAddFaceSuccess(response: AddFaces) = response.status == 0 && response.detail == "success"
 
     private fun createAddRequestBody(p: People): RequestBody {
         val imgBase64 = "data:image/jpeg;base64,"+ p.getFaceImg()
@@ -108,9 +156,21 @@ class EditorViewModel(private val repository: EditorRepository) : ViewModel() {
                     "    \"gender\": \"${p.getGender()}\",\r\n    \"phone\": \"${p.getPhone()}\",\r\n" +
                     "    \"email\": \"${p.getMail()}\",\r\n    \"address\": \"${p.getAddress()}\"\r\n}\r\n"
         }
-        Log.d(TAG, "tmp: $tmp")
+//        Log.d(TAG, "tmp: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
+    }
+
+    private fun createDeleteFaceRequest(people: People): RequestBody {
+        val tmp = "{\r\n    \"personId\" : \"${people.getWorkID()}\"\r\n}\r\n"
+        return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+    }
+
+    private fun createAddFaceRequest(people: People): RequestBody {
+        val imgBase64 = "data:image/jpeg;base64,"+ people.getFaceImg()
+        val tmp = "{\r\n    \"personId\" : \"${people.getWorkID()}\",\r\n    \"images\": " +
+                "[\r\n        {\r\n            \"data\": \"${imgBase64}\"\r\n        }\r\n    ]\r\n}\r\n"
+        return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 
 }

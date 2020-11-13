@@ -46,27 +46,29 @@ class EditorActivity: AppCompatActivity() {
         binding = ActivityPeopleEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        initViewModel()
+        initRecyclerView()
 
-        viewModel = ViewModelProvider(this, EditorFactory(EditorRepository(url)))
-            .get(EditorViewModel::class.java)
-
-        recyclerView = binding.recyclerView
-        recyclerView.adapter = EditorAdapter(this, isEditingMode)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        if (!isEditingMode) {
-            binding.addImage.setOnClickListener {
-                pickImageFromTakePhoto()
-            }
+        binding.addImage.setOnClickListener {
+            pickImageFromTakePhoto()
         }
-
-        binding.addBtn.setOnClickListener { add() }
+        binding.addBtn.setOnClickListener { addOrEdit() }
 
         if (isEditingMode) { showFaceImage() }
 
         observeAddResult()
         observeEditResult()
+    }
 
+    private fun initRecyclerView() {
+        recyclerView = binding.recyclerView
+        recyclerView.adapter = EditorAdapter(this, isEditingMode)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun initViewModel() {
+        viewModel = ViewModelProvider(this, EditorFactory(EditorRepository(url)))
+            .get(EditorViewModel::class.java)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -133,7 +135,8 @@ class EditorActivity: AppCompatActivity() {
             binding.progressView.visibility = View.INVISIBLE
             if (it == true) {
                 Toast.makeText(this, getString(R.string.update_successfully), Toast.LENGTH_SHORT).show()
-                setResult(RESULT_OK, Intent().putExtra("mode", "edit"))
+                val intent = Intent().putExtra("mode", "edit").putExtra("is_face_changed", isPhotoTaken)
+                setResult(RESULT_OK, intent)
                 finish()
             } else {
                 when (viewModel.errorCode) {
@@ -169,9 +172,6 @@ class EditorActivity: AppCompatActivity() {
         } else {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         }
-
-//        Log.d(TAG, "storageDir: $storageDir")
-
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
         //takePhotoIntentUri = Uri.fromFile(image);
         takePhotoIntentUri = FileProvider.getUriForFile(this, "$packageName.fileprovider", image)
@@ -180,9 +180,8 @@ class EditorActivity: AppCompatActivity() {
         startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO)
     }
 
-    private fun add() {
+    private fun addOrEdit() {
 //        if (preventDoubleClickBtn()) return
-
         if (isInputValid()) {
             binding.progressView.visibility = View.VISIBLE
             if (isEditingMode)
@@ -214,7 +213,6 @@ class EditorActivity: AppCompatActivity() {
             .setCancelable(false)
             .create()
             .show()
-
     }
 
     private fun isInputValid(): Boolean {
@@ -222,13 +220,11 @@ class EditorActivity: AppCompatActivity() {
             if (!isPhotoTaken)
                 return false
         }
-
         for (attribute in AttributeType.values()) {
 //            Log.d(TAG, "index: ${attribute.ordinal} isInputValid: ${attribute.isInputValid}")
             if (!attribute.isInputValid)
                 return false
         }
-
         return true
     }
     private fun addPeople () {
@@ -239,11 +235,10 @@ class EditorActivity: AppCompatActivity() {
 
     private fun editPeople () {
         val people = AttributeType.getAttributeData()
-
         if (mImageBase64.isNotEmpty()) {
             people.setFaceImg(mImageBase64)
         }
-        viewModel.editPeople(people)
+        viewModel.editPeople(people, isPhotoTaken)
     }
 
     private fun preventDoubleClickBtn(): Boolean {

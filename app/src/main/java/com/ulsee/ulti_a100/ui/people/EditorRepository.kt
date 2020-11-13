@@ -1,7 +1,9 @@
 package com.ulsee.ulti_a100.ui.people
 
 import com.ulsee.ulti_a100.api.ApiService
+import com.ulsee.ulti_a100.data.response.AddFaces
 import com.ulsee.ulti_a100.data.response.AddPerson
+import com.ulsee.ulti_a100.data.response.DeleteFaces
 import com.ulsee.ulti_a100.data.response.ModifyPerson
 import okhttp3.RequestBody
 
@@ -15,6 +17,15 @@ class EditorRepository(private val url: String?) {
     suspend fun requestModifyPerson(requestBody: RequestBody): ModifyPerson {
         return ApiService.create(url!!).requestModifyPerson(requestBody)
     }
+
+    suspend fun requestDeleteFace(requestBody: RequestBody): DeleteFaces {
+        return ApiService.create(url!!).deleteFaces(requestBody)
+    }
+
+    suspend fun requestAddFace(requestBody: RequestBody): AddFaces {
+        return ApiService.create(url!!).addFaces(requestBody)
+    }
+
 
 //    suspend fun addPeople(p: People): Boolean = withContext(Dispatchers.IO) {
 //        val realm = Realm.getDefaultInstance()

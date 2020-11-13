@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -65,6 +66,7 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
 
     fun editItem(position: Int, item: AllPerson) {
         peopleList[position] = item
+        faceImageCacheMap.remove(item.personId)
         notifyItemChanged(position)
     }
 
@@ -72,6 +74,10 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
         val position = peopleList.size
         peopleList[position] = item
         notifyItemInserted(position)
+    }
+
+    fun removeCachedFace(position: Int) {
+        faceImageCacheMap.remove(peopleList[position].personId)
     }
 
     /**
@@ -95,6 +101,7 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
         private val nameTV = itemView.findViewById<TextView>(R.id.textView_language)
         private val workIdTV = itemView.findViewById<TextView>(R.id.textView_workID)
         private val faceView = itemView.findViewById<ImageView>(R.id.face_img)
+        private val loadingTV = itemView.findViewById<TextView>(R.id.loadingText)
 //        private val markView = itemView.findViewById<ImageView>(R.id.face_select)
         val viewForeground: ConstraintLayout = itemView.findViewById(R.id.view_foreground)
         val deleteIconRight: ImageView = itemView.findViewById(R.id.delete_icon_right)
@@ -121,6 +128,7 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
             viewModel.queryFaceResponse.observe(lifecycleOwner, {
                 Log.d(TAG, "[Enter] viewModel.base64Face.observe")
                 if (data?.personId == it.personId) {
+                    loadingTV.isVisible = false
                     val imgBase64 = it.imgBase64.split("data:image/jpeg;base64,")[1]
                     Glide.with(itemView.context).load(Base64.decode(imgBase64, Base64.DEFAULT)).into(faceView)
                     faceImageCacheMap[it.personId] = it.imgBase64
@@ -141,8 +149,10 @@ class PeopleAdapter(private val viewModel: PeopleViewModel): RecyclerView.Adapte
                 val cachedImgBase64 = faceImageCacheMap[people.personId]
                 if (cachedImgBase64 == null) {
                     clearFaceView()
+                    loadingTV.isVisible = true
                     viewModel.queryPersonFace(people.personId)
                 } else {
+                    loadingTV.isVisible = false
                     displayFaceView(cachedImgBase64)
                     data?.faceImg = cachedImgBase64
                 }

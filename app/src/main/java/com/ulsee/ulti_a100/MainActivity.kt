@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.others_config -> hideBottomNav()
                 R.id.light_mode_config -> hideBottomNav()
                 R.id.volume_config -> hideBottomNav()
+                R.id.time_config -> hideBottomNav()
+                R.id.capture_config -> hideBottomNav()
                 else -> showBottomNav()
             }
 

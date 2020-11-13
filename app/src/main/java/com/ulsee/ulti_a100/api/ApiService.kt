@@ -65,6 +65,25 @@ interface ApiService {
     @POST("api/v1/face/clearAttendRecord")
     suspend fun clearAttendRecord(@Body params: RequestBody): ClearAttendRecord
 
+    @POST("api/v1/face/getTime")
+    suspend fun getTime(): GetTime
+
+    @POST("api/v1/face/setTime")
+    suspend fun setTime(@Body params: RequestBody): SetTime
+
+    @POST("api/v1/face/getComSettings")
+    suspend fun getComSettings(@Body params: RequestBody): GetComSettings
+
+    @POST("api/v1/face/setComSettings")
+    suspend fun setComSettings(@Body params: RequestBody): SetComSettings
+
+    @POST("api/v1/face/deleteFaces")
+    suspend fun deleteFaces(@Body params: RequestBody): DeleteFaces
+
+    @POST("api/v1/face/addFaces")
+    suspend fun addFaces(@Body params: RequestBody): AddFaces
+
+
     companion object {
         fun create(baseUrl: String): ApiService {
             val logger = HttpLoggingInterceptor()
