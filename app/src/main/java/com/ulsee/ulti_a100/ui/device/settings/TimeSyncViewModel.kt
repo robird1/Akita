@@ -1,5 +1,6 @@
 package com.ulsee.ulti_a100.ui.device.settings
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.ulsee.ulti_a100.data.response.Data3
 import com.ulsee.ulti_a100.data.response.GetTime
@@ -55,10 +56,10 @@ class TimeSyncViewModel(private val repository: SettingRepository) : ViewModel()
 
     private fun createJsonRequestBody(): RequestBody {
         val c = Calendar.getInstance()
-        val tmp = "{\r\n    \"year\" : ${c.get(Calendar.YEAR)},\r\n    \"month\" : ${c.get(Calendar.MONTH)},\r\n    " +
+        val tmp = "{\r\n    \"year\" : ${c.get(Calendar.YEAR)},\r\n    \"month\" : ${c.get(Calendar.MONTH)+1},\r\n    " +
                 "\"day\" : ${c.get(Calendar.DAY_OF_MONTH)},\r\n    \"hour\" : ${c.get(Calendar.HOUR_OF_DAY)},\r\n    " +
                 "\"min\" : ${c.get(Calendar.MINUTE)},\r\n    \"sec\" : ${c.get(Calendar.SECOND)}\r\n}"
-//        Log.d(TAG, "tmp: $tmp")
+        Log.d(TAG, "tmp: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 
