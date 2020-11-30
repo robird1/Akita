@@ -6,10 +6,10 @@
         android:icon="@drawable/nav_device"
         android:title="@string/title_device" />
 
-    <item
-        android:id="@+id/navigation_people"
-        android:icon="@drawable/nav_people"
-        android:title="@string/title_people" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_people"-->
+<!--        android:icon="@drawable/nav_people"-->
+<!--        android:title="@string/title_people" />-->
 
     <item
         android:id="@+id/navigation_record"

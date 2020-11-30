@@ -47,11 +47,11 @@
                 android:layout_height="50dp"
                 android:text="Enable Liveness" />
 
-            <CheckBox
-                android:id="@+id/checkBox_stranger_warn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Enable Stranger Warning" />
+<!--            <CheckBox-->
+<!--                android:id="@+id/checkBox_stranger_warn"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:text="Enable Stranger Warning" />-->
         </LinearLayout>
     </ScrollView>
 

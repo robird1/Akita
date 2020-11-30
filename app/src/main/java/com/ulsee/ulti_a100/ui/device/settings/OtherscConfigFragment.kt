@@ -54,16 +54,15 @@ class OthersConfigFragment: Fragment() {
     private fun initValues() {
         binding.checkBoxSingleWarn.isChecked = args.othersConfig.enableSingleWarn
         binding.checkBoxLiveness.isChecked = args.othersConfig.enableLiveness
-        binding.checkBoxStrangerWarn.isChecked = args.othersConfig.enableStrangerWarn
     }
 
     private fun getInput(): OthersConfigData {
         return OthersConfigData(binding.checkBoxSingleWarn.isChecked, binding.checkBoxLiveness.isChecked,
-            binding.checkBoxStrangerWarn.isChecked, args.othersConfig.url)
+            args.othersConfig.url)
     }
 
 }
 
 
 @Parcelize
-data class OthersConfigData(var enableSingleWarn: Boolean, var enableLiveness: Boolean, var enableStrangerWarn: Boolean, var url: String): Parcelable
+data class OthersConfigData(var enableSingleWarn: Boolean, var enableLiveness: Boolean, var url: String): Parcelable

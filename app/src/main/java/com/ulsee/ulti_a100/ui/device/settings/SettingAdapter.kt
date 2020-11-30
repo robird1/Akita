@@ -84,15 +84,16 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
     abstract fun onClick(fragment: Fragment, url: String)
 
     companion object {
-        const val ITEM_COUNT = 8
-        const val POSITION_VOLUME = 0
-        const val POSITION_LANGUAGE = 1
-        const val POSITION_TEMPERATURE = 2
-        const val POSITION_PANEL_UI = 3
-        const val POSITION_LIGHT_MODE = 4
-        const val POSITION_CAPTURE = 5
-        const val POSITION_TIME = 6
-        const val POSITION_OTHERS = 7
+        const val ITEM_COUNT = 9
+        const val POSITION_WIFI = 0
+        const val POSITION_VOLUME = 1
+        const val POSITION_LANGUAGE = 2
+        const val POSITION_TEMPERATURE = 3
+        const val POSITION_PANEL_UI = 4
+        const val POSITION_LIGHT_MODE = 5
+        const val POSITION_CAPTURE = 6
+        const val POSITION_TIME = 7
+        const val POSITION_OTHERS = 8
     }
 }
 
@@ -165,7 +166,7 @@ class PanelUI(config: FaceUIConfig?): SettingAttributes(config) {
         if (config != null) {
             val args = PanelUIData(
                 config.show_ip, config.show_mac_address, config.show_frame,
-                config.show_people_count, config.show_recognize_area, config.show_recognize_result,
+                config.show_recognize_area,
                 config.show_body_temperature, url
             )
             val action = SettingFragmentDirections.actionToPanelUiConfig(args)
@@ -228,8 +229,7 @@ class Others(config: FaceUIConfig?): SettingAttributes(config) {
 
     override fun onClick(fragment: Fragment, url: String) {
         if (config != null) {
-            val args = OthersConfigData(
-                config.enableSingleWarning, config.enableLiveness, config.enableStrangerWarning, url)
+            val args = OthersConfigData(config.enableSingleWarning, config.enableLiveness, url)
             val action = SettingFragmentDirections.actionToOthersConfig(args)
             fragment.findNavController().navigate(action)
         }

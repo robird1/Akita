@@ -33,8 +33,7 @@ class PanelUIViewModel(private val repository: SettingRepository) : ViewModel() 
     private fun createJsonRequestBody(data: PanelUIData): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n        \"show_body_temperature\": ${data.showTemperature},\r\n" +
                 "        \"show_frame\": ${data.showFrame},\r\n        \"show_ip\": ${data.showIP},\r\n" +
-                "        \"show_mac_address\": ${data.showMAC},\r\n        \"show_people_count\": ${data.showPeopleCount},\r\n" +
-                "        \"show_recognize_area\": ${data.showArea},\r\n        \"show_recognize_result\": ${data.showResult}\r\n    }\r\n\r\n}\r\n"
+                "        \"show_mac_address\": ${data.showMAC},\r\n        \"show_recognize_area\": ${data.showArea}\r\n    }\r\n\r\n}\r\n"
         Log.d(TAG, "tmp: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }

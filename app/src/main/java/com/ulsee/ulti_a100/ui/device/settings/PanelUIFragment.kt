@@ -55,16 +55,15 @@ class PanelUIFragment: Fragment() {
         binding.checkBoxIp.isChecked = args.panelUi.showIP
         binding.checkBoxMac.isChecked = args.panelUi.showMAC
         binding.checkBoxFrame.isChecked = args.panelUi.showFrame
-        binding.checkBoxRegistration.isChecked = args.panelUi.showPeopleCount
+//        binding.checkBoxRegistration.isChecked = args.panelUi.showPeopleCount
         binding.checkBoxRecognizeArea.isChecked = args.panelUi.showArea
-        binding.checkBoxRecognizeResult.isChecked = args.panelUi.showResult
+//        binding.checkBoxRecognizeResult.isChecked = args.panelUi.showResult
         binding.checkBoxTemperature.isChecked = args.panelUi.showTemperature
     }
 
     private fun getInput(): PanelUIData {
         return PanelUIData(binding.checkBoxIp.isChecked, binding.checkBoxMac.isChecked,
-            binding.checkBoxFrame.isChecked, binding.checkBoxRegistration.isChecked,
-            binding.checkBoxRecognizeArea.isChecked, binding.checkBoxRecognizeResult.isChecked,
+            binding.checkBoxFrame.isChecked, binding.checkBoxRecognizeArea.isChecked,
             binding.checkBoxTemperature.isChecked, args.panelUi.url)
     }
 
@@ -73,5 +72,5 @@ class PanelUIFragment: Fragment() {
 
 @Parcelize
 data class PanelUIData(var showIP: Boolean, var showMAC: Boolean, var showFrame: Boolean,
-                       var showPeopleCount: Boolean, var showArea: Boolean, var showResult: Boolean,
+                       var showArea: Boolean,
                        var showTemperature: Boolean, var url: String): Parcelable

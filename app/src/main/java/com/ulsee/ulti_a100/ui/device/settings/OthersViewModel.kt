@@ -32,7 +32,7 @@ class OthersViewModel(private val repository: SettingRepository) : ViewModel() {
 
     private fun createJsonRequestBody(data: OthersConfigData): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n        \"enableSingleWarning\": ${data.enableSingleWarn},\r\n" +
-                "        \"enableLiveness\":${data.enableLiveness},\r\n        \"enableStrangerWarning\":${data.enableStrangerWarn}\r\n    }\r\n\r\n}\r\n"
+                "        \"enableLiveness\":${data.enableLiveness}\r\n    }\r\n\r\n}\r\n"
         Log.d(TAG, "tmp: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
