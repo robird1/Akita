@@ -16,7 +16,7 @@ class DeviceListAdapter(private val viewModel: DeviceListViewModel): DeviceListA
     }
 }
 
-class PeopleDeviceViewHolder(itemView: View, private val viewModel: DeviceListViewModel) : RecordViewHolder(itemView, viewModel) {
+class PeopleDeviceViewHolder(itemView: View, val viewModel: DeviceListViewModel) : RecordViewHolder(itemView, viewModel) {
     override fun getNavigateAction() = DeviceFragmentDirections.actionToPeople(device!!.getIP())
 
 }

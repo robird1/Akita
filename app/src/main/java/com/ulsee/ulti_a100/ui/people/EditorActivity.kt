@@ -67,7 +67,7 @@ class EditorActivity: AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this, EditorFactory(EditorRepository(url)))
+        viewModel = ViewModelProvider(this, EditorFactory(PeopleRepository(url!!)))
             .get(EditorViewModel::class.java)
     }
 
