@@ -120,7 +120,7 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
                 val isTempTooHigh = temp > notificationInfoMap[key]!!.maxTemp
                 Log.d(TAG, "listenNotification $key, is temp too high = $isTempTooHigh, temp = $temp, temperatureUnit = ${notificationInfoMap[key]!!.temperatureUnit}, max = ${notificationInfoMap[key]!!.maxTemp} {notifiaction.timestamp}")
                 if (isTempTooHigh) {
-                    doNotify(notification)
+                    doNotify(notification, notificationInfoMap[key]!!.temperatureUnit)
                 }
             }
             notificationInfoMap[key]!!.startId = notificationInfoMap[key]!!.startId?.plus(records.data.size)
@@ -142,7 +142,7 @@ private fun App.createJsonRequestBody(vararg params: Pair<String, Int>): Request
 }
 private fun App.isDeviceOnline(deviceInfo: GetDeviceInfo) = deviceInfo.status == 0 && deviceInfo.detail == "OK"
 
-private fun App.doNotify(notification: AttendRecord) {
+private fun App.doNotify(notification: AttendRecord, tempUnit: String) {
 
     val appPreference = AppPreference(PreferenceManager.getDefaultSharedPreferences(this))
     val isNotificationEnabled = appPreference.isFeverNotificationEnabled()
@@ -160,9 +160,24 @@ private fun App.doNotify(notification: AttendRecord) {
             bundle.putString("gender", it.gender)
             bundle.putString("country", it.country)
             bundle.putString("date", it.timestamp)
-            bundle.putString("temperature", it.bodyTemperature)
+            bundle.putString("temperature", getTransformedTemperature(it.bodyTemperature, tempUnit))
             intent.putExtra("bundle", bundle)
         }
         NotificationCenter.shared.show(mContext, intent, mContext.getString(R.string.title_alert_notification), notification)
     }
+}
+
+private fun App.getTransformedTemperature(value: String, temperatureUnit: String): String {
+    return if (value.isNotEmpty()) {
+        if (temperatureUnit == "F") {
+            String.format("%.1f", celciusToFahrenheit(value.toFloat())) + " °F"
+        } else {
+            String.format("%.1f", value.toFloat()) + " °C"
+        }
+    } else {
+        ""
+    }
+}
+private fun App.celciusToFahrenheit(celsius: Float): Float {
+    return celsius * 9 / 5 + 32
 }
