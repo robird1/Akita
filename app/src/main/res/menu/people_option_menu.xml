@@ -6,7 +6,7 @@
         android:title="Search"
         android:icon="@drawable/ic_toolbar_search_gray"
         app:showAsAction="always|collapseActionView"
-        app:actionViewClass="com.ulsee.ulti_a100.ui.people.PeopleSearchView" />
+        app:actionViewClass="com.ulsee.shiba.ui.people.PeopleSearchView" />
 
 <!--    <item-->
 <!--        android:id="@+id/editor_action_more"-->

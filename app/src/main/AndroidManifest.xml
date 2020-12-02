@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ulsee.ulti_a100">
+    package="com.ulsee.shiba">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /><!-- scan wifi -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> <!-- scan wifi -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- scan wifi -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/> <!-- change wifi -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/> <!-- change wifi for Android 10 -->
 
     <application
-        android:name="com.ulsee.ulti_a100.App"
+        android:name="com.ulsee.shiba.App"
         android:allowBackup="true"
         android:icon="@mipmap/launcher"
         android:label="@string/app_name"
@@ -17,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppMaterialTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.ulsee.ulti_a100.ui.LaunchActivity">
+        <activity android:name="com.ulsee.shiba.ui.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,26 +34,30 @@
 <!--            android:screenOrientation="portrait"-->
 <!--            tools:ignore="LockedOrientationActivity"></activity>-->
         <activity
-            android:name="com.ulsee.ulti_a100.MainActivity"
+            android:name="com.ulsee.shiba.MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
         <activity
-            android:name="com.ulsee.ulti_a100.ui.record.RecordInfoActivity"
+            android:name="com.ulsee.shiba.ui.record.RecordInfoActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
         <activity
-            android:name="com.ulsee.ulti_a100.ui.people.EditorActivity"
+            android:name="com.ulsee.shiba.ui.people.EditorActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
         <activity
-            android:name="com.ulsee.ulti_a100.ui.people.DeviceSyncActivity"
+            android:name="com.ulsee.shiba.ui.people.DeviceSyncActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
 
         <activity
-            android:name="com.ulsee.ulti_a100.ui.streaming.VlcRtspActivity"
+            android:name="com.ulsee.shiba.ui.streaming.VlcRtspActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
+        <activity
+            android:name="com.ulsee.shiba.ui.device.settings.WIFIListActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
 

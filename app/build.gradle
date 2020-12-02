@@ -4,13 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+//apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.1"
 
     defaultConfig {
-        applicationId "com.example.deepano"
+        applicationId "com.ulsee.shiba"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
@@ -74,6 +75,9 @@ dependencies {
 
     // perference
     implementation "androidx.preference:preference-ktx:$preferenceVersion"
+
+    // wifi
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_device"
-        android:name="com.ulsee.ulti_a100.ui.device.DeviceFragment"
+        android:name="com.ulsee.shiba.ui.device.DeviceFragment"
         android:label="@string/title_device"
         tools:layout="@layout/fragment_device_list" >
         <action
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/navigation_people"
-        android:name="com.ulsee.ulti_a100.ui.people.DeviceFragment"
+        android:name="com.ulsee.shiba.ui.people.DeviceFragment"
         android:label="@string/title_people"
         tools:layout="@layout/fragment_people_list" >
         <action
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/navigation_record"
-        android:name="com.ulsee.ulti_a100.ui.record.DeviceFragment"
+        android:name="com.ulsee.shiba.ui.record.DeviceFragment"
         android:label="@string/title_notification"
         tools:layout="@layout/fragment_notification_list" >
         <action
@@ -41,13 +41,13 @@
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.ulsee.ulti_a100.ui.settings.SettingFragment"
+        android:name="com.ulsee.shiba.ui.settings.SettingFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/device_info"
-        android:name="com.ulsee.ulti_a100.ui.device.DeviceInfoFragment"
+        android:name="com.ulsee.shiba.ui.device.DeviceInfoFragment"
         android:label="Device Information"
         tools:layout="@layout/fragment_device_info" >
         <argument
@@ -58,7 +58,7 @@
 
     <fragment
         android:id="@+id/people"
-        android:name="com.ulsee.ulti_a100.ui.people.PeopleFragment"
+        android:name="com.ulsee.shiba.ui.people.PeopleFragment"
         android:label="@string/title_people"
         tools:layout="@layout/fragment_people_list" >
         <argument
@@ -69,7 +69,7 @@
 
     <fragment
         android:id="@+id/attend_record"
-        android:name="com.ulsee.ulti_a100.ui.record.AttendRecordFragment"
+        android:name="com.ulsee.shiba.ui.record.AttendRecordFragment"
         android:label="Attend Record"
         tools:layout="@layout/fragment_attend_records" >
         <argument
@@ -80,7 +80,7 @@
 
     <fragment
         android:id="@+id/device_settings"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.SettingFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.SettingFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_device_setting" >
         <argument
@@ -111,11 +111,14 @@
         <action
             android:id="@+id/action_to_capture_config"
             app:destination="@id/capture_config" />
+        <action
+            android:id="@+id/action_to_connect_mode"
+            app:destination="@id/wifi_config" />
     </fragment>
 
     <fragment
         android:id="@+id/language_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.LanguageFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.LanguageFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_language_config">
         <argument
@@ -135,12 +138,12 @@
 
     <fragment
         android:id="@+id/temperature_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.TemperatureFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.TemperatureFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_language_config">
         <argument
             android:name="temperature"
-            app:argType="com.ulsee.ulti_a100.ui.device.settings.TemperatureData" />
+            app:argType="com.ulsee.shiba.ui.device.settings.TemperatureData" />
         <action
             android:id="@+id/action_to_device_settings"
             app:destination="@id/device_settings"
@@ -150,12 +153,12 @@
 
     <fragment
         android:id="@+id/panel_ui_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.PanelUIFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.PanelUIFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_panel_ui_config">
         <argument
             android:name="panel_ui"
-            app:argType="com.ulsee.ulti_a100.ui.device.settings.PanelUIData" />
+            app:argType="com.ulsee.shiba.ui.device.settings.PanelUIData" />
         <action
             android:id="@+id/action_to_device_settings"
             app:destination="@id/device_settings"
@@ -165,12 +168,12 @@
 
     <fragment
         android:id="@+id/others_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.OthersConfigFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.OthersConfigFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_others_config">
         <argument
             android:name="others_config"
-            app:argType="com.ulsee.ulti_a100.ui.device.settings.OthersConfigData" />
+            app:argType="com.ulsee.shiba.ui.device.settings.OthersConfigData" />
         <action
             android:id="@+id/action_to_device_settings"
             app:destination="@id/device_settings"
@@ -180,12 +183,12 @@
 
     <fragment
         android:id="@+id/light_mode_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.LightModeFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.LightModeFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_light_mode">
         <argument
             android:name="light_mode"
-            app:argType="com.ulsee.ulti_a100.ui.device.settings.LightModeData" />
+            app:argType="com.ulsee.shiba.ui.device.settings.LightModeData" />
 
         <action
             android:id="@+id/action_to_device_settings"
@@ -196,7 +199,7 @@
 
     <fragment
         android:id="@+id/volume_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.VolumeFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.VolumeFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_volume_config">
         <argument
@@ -215,7 +218,7 @@
 
     <fragment
         android:id="@+id/time_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.TimeSyncFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.TimeSyncFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_time_sync">
         <argument
@@ -231,7 +234,7 @@
 
     <fragment
         android:id="@+id/capture_config"
-        android:name="com.ulsee.ulti_a100.ui.device.settings.CaptureFragment"
+        android:name="com.ulsee.shiba.ui.device.settings.CaptureFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_capture_config">
         <argument
@@ -242,6 +245,22 @@
             android:id="@+id/action_to_device_settings"
             app:destination="@id/device_settings"
             app:popUpTo="@id/device_settings"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/wifi_config"
+        android:name="com.ulsee.shiba.ui.device.settings.ConnectModeFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_connect_mode">
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/navigation_device"
+            app:popUpTo="@id/navigation_device"
             app:launchSingleTop="true"/>
     </fragment>
 
