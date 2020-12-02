@@ -208,7 +208,7 @@ class Capture(config: FaceUIConfig?): SettingAttributes(config) {
 class Time(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {
         super.setValue(itemView)
-        configName?.text = "Time"
+        configName?.text = "Time Sync"
         configValue?.text = ""
     }
 

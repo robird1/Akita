@@ -49,7 +49,7 @@ class DeviceFragment : Fragment() {
         binding.recyclerView.adapter = DeviceListAdapter(viewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
-//        (activity as MainActivity).setTitle("Records")
+        (activity as MainActivity).setTitle("Records")
 
         return binding.root
     }

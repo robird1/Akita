@@ -29,7 +29,7 @@ class SettingFragment: Fragment() {
 
         observeDeviceConfig()
 
-        (activity as MainActivity).setTitle("Settings")
+        (activity as MainActivity).setTitle("Device Settings")
 
         return binding.root
     }

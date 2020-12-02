@@ -22,7 +22,6 @@ class RecordInfoActivity: AppCompatActivity() {
             showTemperature(it)
             showAge(it)
             showGender(it)
-            showCountry(it)
             showDate(it)
             showFaceImg()
         }
@@ -61,10 +60,6 @@ class RecordInfoActivity: AppCompatActivity() {
 
     private fun showDate(it: Bundle) {
         binding.recordInfoDate.text = it.getString("date", "").split(".")[0]
-    }
-
-    private fun showCountry(it: Bundle) {
-        binding.recordInfoCountry.text = it.getString("country", "")
     }
 
     private fun showName(it: Bundle) {

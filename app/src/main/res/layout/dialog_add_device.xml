@@ -78,14 +78,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:prefixText="http://"
         app:suffixText=":8080">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="IP Address"
-            android:inputType="text"
+            android:inputType="numberDecimal"
+            android:digits="0123456789."
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>

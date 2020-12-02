@@ -29,7 +29,7 @@ class CaptureFragment: Fragment() {
         initFooterBtnListener()
         observeGetConfig()
         observeSetConfig()
-        (activity as MainActivity).setTitle("Capture")
+        (activity as MainActivity).setTitle("Capture Attributes")
         return binding.root
     }
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ulsee.ulti_a100.MainActivity
 import com.ulsee.ulti_a100.databinding.FragmentRecordDeviceListBinding
 import com.ulsee.ulti_a100.ui.device.DeviceInfoRepository
 import com.ulsee.ulti_a100.ui.record.DeviceListFactory
@@ -32,7 +33,7 @@ class DeviceFragment : Fragment() {
         binding.recyclerView.adapter = DeviceListAdapter(viewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
-//        (activity as MainActivity).setTitle("Records")
+        (activity as MainActivity).setTitle("People Management")
 
         return binding.root
     }

@@ -11,7 +11,7 @@
         <menu>
             <item
                 android:id="@+id/clear_all"
-                android:title="clear all records"
+                android:title="Clear all records"
                 app:showAsAction="never" />
         </menu>
 

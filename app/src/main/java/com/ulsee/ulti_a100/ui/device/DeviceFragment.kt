@@ -161,7 +161,8 @@ class DeviceFragment : Fragment() {
             if (isInputValid) {
                 showProgressView(dialog!!, true)
                 val deviceName = binding.textInputDeviceName.editText?.text.toString()
-                val url = "http://"+binding.textInputIpAddress.editText?.text.toString()+ ":"+ PORT_NUMBER
+                val urlInput = binding.textInputIpAddress.editText?.text.toString()
+                val url = "http://$urlInput:$PORT_NUMBER"
 //                Log.d(TAG, "url: $url")
                 viewModel.addDevice(false, "", deviceName, url)
             }

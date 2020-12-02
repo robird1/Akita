@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,7 @@ class VolumeFragment: Fragment() {
             .get(VolumeViewModel::class.java)
 
         initValues()
+        initSeekBarListener()
         observeSetDeviceConfig()
 
         binding.buttonApply.setOnClickListener {
@@ -49,6 +51,24 @@ class VolumeFragment: Fragment() {
 
     private fun initValues() {
         binding.seekBar.progress = args.volume
+        binding.volumeValue.text = args.volume.toString()
+    }
+
+    private fun initSeekBarListener() {
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                binding.volumeValue.text = progress.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+        })
 
     }
 

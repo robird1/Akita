@@ -5,6 +5,10 @@ import androidx.lifecycle.*
 import com.ulsee.ulti_a100.data.response.Data3
 import com.ulsee.ulti_a100.data.response.GetTime
 import com.ulsee.ulti_a100.data.response.SetTime
+import com.ulsee.ulti_a100.model.Device
+import com.ulsee.ulti_a100.ui.device.POLLING_INTERVAL
+import com.ulsee.ulti_a100.ui.record.DeviceStatus
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -14,9 +18,15 @@ import java.util.*
 private val TAG = TimeSyncViewModel::class.java.simpleName
 
 class TimeSyncViewModel(private val repository: SettingRepository) : ViewModel() {
-    private var _deviceTime = MutableLiveData<Data3>()
-    val deviceTime: LiveData<Data3>
+//    private var _deviceTime = MutableLiveData<Data3>()
+//    val deviceTime: LiveData<Data3>
+//        get() = _deviceTime
+private var _deviceTime = MutableLiveData<Long>()
+    val deviceTime: LiveData<Long>
         get() = _deviceTime
+    private var _mobileTime = MutableLiveData<Long>()
+    val mobileTime: LiveData<Long>
+        get() = _mobileTime
     private var _syncResult = MutableLiveData<Boolean>()
     val syncResult: LiveData<Boolean>
         get() = _syncResult
@@ -24,19 +34,33 @@ class TimeSyncViewModel(private val repository: SettingRepository) : ViewModel()
 
     init {
         getTime()
+        getMobileTime()
     }
 
     private fun getTime() {
         viewModelScope.launch {
             try {
                 val response = repository.getTime()
-                if (isGetTimeSuccess(response))
-                    _deviceTime.value = response.data
+                if (isGetTimeSuccess(response)) {
+
+                    val tempData = response.data
+                    val c = Calendar.getInstance()
+                    c.set(tempData.year, tempData.month-1, tempData.day, tempData.hour, tempData.min, tempData.sec)
+                    _deviceTime.value = c.timeInMillis
+
+                    delay(1000)
+                    while(true) {
+                        _deviceTime.value = _deviceTime.value!! + 1000
+
+                        delay(1000)
+                    }
+                }
                 else
                     _deviceTime.value = null
             } catch (e: Exception) {
                 _deviceTime.value = null
             }
+
         }
     }
 
@@ -50,6 +74,17 @@ class TimeSyncViewModel(private val repository: SettingRepository) : ViewModel()
             }
         }
     }
+
+    private fun getMobileTime() {
+        val job = viewModelScope.launch  {
+            while(true) {
+                _mobileTime.value = Calendar.getInstance().timeInMillis
+
+                delay(1000)
+            }
+        }
+    }
+
 
     private fun isGetTimeSuccess(response: GetTime) = response.status == 0 && response.detail == "ok"
     private fun isSetTimeSuccess(response: SetTime) = response.status == 0 && response.detail == "ok"
