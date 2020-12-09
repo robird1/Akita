@@ -63,7 +63,7 @@
                 android:id="@+id/checkBox_recognize_area"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Recognize Area" />
+                android:text="Show Recognition Area" />
 
             <CheckBox
                 android:id="@+id/checkBox_recognize_result"
