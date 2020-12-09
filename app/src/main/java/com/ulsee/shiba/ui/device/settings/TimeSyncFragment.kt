@@ -14,6 +14,7 @@ import com.ulsee.shiba.MainActivity
 import com.ulsee.shiba.data.response.Data3
 import com.ulsee.shiba.databinding.FragmentTimeSyncBinding
 import kotlinx.android.synthetic.main.fragment_time_sync.*
+import java.text.SimpleDateFormat
 
 private val TAG = TimeSyncFragment::class.java.simpleName
 
@@ -22,12 +23,16 @@ class TimeSyncFragment: Fragment() {
     private lateinit var viewModel: TimeSyncViewModel
     private val args: TimeSyncFragmentArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentTimeSyncBinding.inflate(inflater, container, false)
         initViewModel()
-        initCheckBoxListener()
         initFooterBtnListener()
         observeDeviceTime()
+        observeMobileTime()
         observeSyncTime()
         (activity as MainActivity).setTitle("Time Sync")
         return binding.root
@@ -39,26 +44,30 @@ class TimeSyncFragment: Fragment() {
     }
 
     private fun initFooterBtnListener() {
+        binding.syncBtn.isEnabled = false
         binding.syncBtn.setOnClickListener {
             binding.progressView.isVisible = true
             viewModel.syncTime()
         }
     }
 
-    private fun initCheckBoxListener() {
-        binding.checkBoxSync.setOnCheckedChangeListener { _, isChecked ->
-            sync_btn.isEnabled = isChecked
-        }
-    }
-
     private fun observeDeviceTime() {
         viewModel.deviceTime.observe(viewLifecycleOwner, { time ->
+            binding.progressView.isVisible = false
             if (time != null) {
+                sync_btn.isEnabled = true
+//                binding.deviceTime.setText(getDisplayTime(time))
                 binding.deviceTime.setText(getDisplayTime(time))
-                binding.progressView.isVisible = false
             } else {
+                sync_btn.isEnabled = false
                 Toast.makeText(requireContext(), "Obtain device time failed", Toast.LENGTH_SHORT).show()
             }
+        })
+    }
+
+    private fun observeMobileTime() {
+        viewModel.mobileTime.observe(viewLifecycleOwner, { time ->
+            binding.mobileTime.setText(getDisplayTime(time))
         })
     }
 
@@ -75,7 +84,11 @@ class TimeSyncFragment: Fragment() {
         })
     }
 
-    private fun getDisplayTime(time: Data3) = String.format("%4d-%02d-%02d %02d:%02d:%02d",
-        time.year, time.month, time.day, time.hour, time.min, time.sec)
+    private fun getDisplayTime(time: Data3) = String.format(
+        "%4d-%02d-%02d %02d:%02d:%02d",
+        time.year, time.month, time.day, time.hour, time.min, time.sec
+    )
+
+    private fun getDisplayTime(time: Long) = SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(time)
 
 }

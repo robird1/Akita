@@ -53,23 +53,23 @@
                 android:layout_height="50dp"
                 android:text="Show Tracking Frame" />
 
-<!--            <CheckBox-->
-<!--                android:id="@+id/checkBox_registration"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:text="Show Number of Registration" />-->
+            <CheckBox
+                android:id="@+id/checkBox_registration"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Number of Registration" />
 
             <CheckBox
                 android:id="@+id/checkBox_recognize_area"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Recognize Area" />
+                android:text="Show Recognition Area" />
 
-<!--            <CheckBox-->
-<!--                android:id="@+id/checkBox_recognize_result"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:text="Show Recognize Result" />-->
+            <CheckBox
+                android:id="@+id/checkBox_recognize_result"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Show Recognition Result" />
 
             <CheckBox
                 android:id="@+id/checkBox_temperature"

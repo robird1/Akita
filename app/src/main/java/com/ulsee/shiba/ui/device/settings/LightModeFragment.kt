@@ -33,7 +33,7 @@ class LightModeFragment: Fragment() {
             viewModel.setDeviceConfig(getInput())
         }
 
-        (activity as MainActivity).setTitle("Mode")
+        (activity as MainActivity).setTitle("Light / LCD Mode")
 
         return binding.root
     }

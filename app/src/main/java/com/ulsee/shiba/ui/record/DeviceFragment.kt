@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ulsee.shiba.MainActivity
 import com.ulsee.shiba.databinding.FragmentRecordDeviceListBinding
 import com.ulsee.shiba.ui.device.DeviceInfoRepository
 
@@ -47,7 +49,7 @@ class DeviceFragment : Fragment() {
         binding.recyclerView.adapter = DeviceListAdapter(viewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
-//        (activity as MainActivity).setTitle("Records")
+        (activity as MainActivity).setTitle("Records")
 
         return binding.root
     }

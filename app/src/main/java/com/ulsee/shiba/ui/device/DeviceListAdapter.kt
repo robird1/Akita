@@ -66,7 +66,7 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
         val menuLayout = itemView.findViewById<View>(R.id.layout_menu)
         mPopup = PopupMenu(itemView.context, menuLayout)
         mPopup.menu.add("a").setTitle("Edit Device Info")
-        mPopup.menu.add("b").setTitle("Device Setting")
+        mPopup.menu.add("b").setTitle("Device Settings")
         mPopup.menu.add("c").setTitle("Device Info")
         mPopup.menu.add("d").setTitle("Remove")
 
@@ -75,7 +75,7 @@ class ViewHolder(itemView: View, private val viewModel: DeviceListViewModel, pri
                 "Edit Device Info" -> {
                     fragment.showEditDeviceDialog(device!!)
                 }
-                "Device Setting" -> {
+                "Device Settings" -> {
                     navigateToSettingFragment(itemView)
                 }
                 "Device Info" -> {
