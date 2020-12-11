@@ -9,7 +9,7 @@ enum class AttributeType(val fieldName: String, val position: Int, val viewType:
 
     NAME("Name", 0, R.layout.item_list_people_text, "*Required", "", false),
     WORK_ID("Work ID", 1, R.layout.item_list_people_text, "*Required","", false),
-    MAIL("Mail", 2, R.layout.item_list_people_text, "*Required", "", false),
+    MAIL("Email", 2, R.layout.item_list_people_text, "*Required", "", false),
     GENDER("Gender", 3, R.layout.item_list_people_gender, "*Required", "", false),
     AGE("Age", 4, R.layout.item_list_people_text, "", "", true),
     PHONE("Phone", 5, R.layout.item_list_people_text, "", "", true),
