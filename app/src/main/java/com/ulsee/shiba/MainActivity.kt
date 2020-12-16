@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.light_mode_config -> hideBottomNav()
                 R.id.volume_config -> hideBottomNav()
                 R.id.time_config -> hideBottomNav()
-                R.id.capture_config -> hideBottomNav()
+//                R.id.capture_config -> hideBottomNav()
+                R.id.mask_config -> hideBottomNav()
                 R.id.wifi_config -> hideBottomNav()
                 else -> showBottomNav()
             }

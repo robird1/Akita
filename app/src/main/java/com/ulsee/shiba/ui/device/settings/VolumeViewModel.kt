@@ -28,7 +28,7 @@ class VolumeViewModel(private val repository: SettingRepository) : ViewModel() {
         }
     }
 
-    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0
 
     private fun createJsonRequestBody(value: Int): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n            \"volume\": ${value}\r\n    }\r\n\r\n}\r\n"

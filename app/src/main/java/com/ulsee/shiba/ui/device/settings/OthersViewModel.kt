@@ -28,7 +28,7 @@ class OthersViewModel(private val repository: SettingRepository) : ViewModel() {
         }
     }
 
-    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0
 
     private fun createJsonRequestBody(data: OthersConfigData): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n        \"enableSingleWarning\": ${data.enableSingleWarn},\r\n" +

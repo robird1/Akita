@@ -28,7 +28,7 @@ class LanguageViewModel(private val repository: SettingRepository) : ViewModel()
         }
     }
 
-    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0
 
     private fun createJsonRequestBody(language: String): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n        \r\n       \"language\" : \"$language\"\r\n\r\n    }\r\n\r\n}"

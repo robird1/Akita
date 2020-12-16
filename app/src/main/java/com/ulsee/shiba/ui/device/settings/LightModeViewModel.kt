@@ -29,7 +29,7 @@ class LightModeViewModel(private val repository: SettingRepository) : ViewModel(
         }
     }
 
-    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0
 
     private fun createJsonRequestBody(data: LightModeData): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n            \"lcdMode\": ${data.lcdMode},\r\n            \"lightMode\": ${data.lightMode}\r\n    }\r\n\r\n}\r\n"

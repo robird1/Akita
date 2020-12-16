@@ -28,12 +28,12 @@ class PanelUIViewModel(private val repository: SettingRepository) : ViewModel() 
         }
     }
 
-    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0
 
     private fun createJsonRequestBody(data: PanelUIData): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n        \"show_body_temperature\": ${data.showTemperature},\r\n" +
                 "        \"show_frame\": ${data.showFrame},\r\n        \"show_ip\": ${data.showIP},\r\n" +
-                "        \"show_mac_address\": ${data.showMAC},\r\n        \"show_recognize_area\": ${data.showArea}\r\n    }\r\n\r\n}\r\n"
+                "        \"show_mac_address\": ${data.showMAC},\r\n        \"show_temperature_area\": ${data.showTemperatureArea}\r\n    }\r\n\r\n}\r\n"
         Log.d(TAG, "tmp: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }

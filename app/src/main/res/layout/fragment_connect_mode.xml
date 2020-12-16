@@ -30,6 +30,168 @@
             android:text="STA Mode" />
     </RadioGroup>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/confirm_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/unit_group">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_ssid"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="16dp"
+                android:hint="SSID"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/unit_group">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--    <com.google.android.material.textfield.TextInputLayout-->
+            <!--        android:id="@+id/textInputLayout_min"-->
+            <!--        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"-->
+            <!--        android:cursorVisible="false"-->
+            <!--        android:layout_width="100dp"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:layout_marginTop="8dp"-->
+            <!--        android:hint="Min"-->
+            <!--        app:layout_constraintStart_toStartOf="@+id/textInputLayout_max"-->
+            <!--        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_max"-->
+            <!--        app:suffixText="°C">-->
+
+            <!--        <com.google.android.material.textfield.TextInputEditText-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:inputType="text"-->
+            <!--            android:maxLines="1"-->
+            <!--            android:cursorVisible="false"-->
+            <!--            android:focusableInTouchMode="false" />-->
+            <!--    </com.google.android.material.textfield.TextInputLayout>-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Password"
+                app:layout_constraintStart_toStartOf="@+id/textInputLayout_ssid"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout_ssid">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--    <com.google.android.material.textfield.TextInputLayout-->
+            <!--        android:id="@+id/textInputLayout_offset"-->
+            <!--        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"-->
+            <!--        android:cursorVisible="false"-->
+            <!--        android:layout_width="100dp"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:layout_marginTop="8dp"-->
+            <!--        android:hint="Offset"-->
+            <!--        app:layout_constraintStart_toStartOf="@+id/textInputLayout_min"-->
+            <!--        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_min"-->
+            <!--        app:suffixText="°C" >-->
+
+            <!--        <com.google.android.material.textfield.TextInputEditText-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:inputType="text"-->
+            <!--            android:maxLines="1"-->
+            <!--            android:cursorVisible="false"-->
+            <!--            android:focusableInTouchMode="false" />-->
+            <!--    </com.google.android.material.textfield.TextInputLayout>-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_ip"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="IP Address"
+                app:layout_constraintStart_toStartOf="@+id/textInputLayout_password"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout_password">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_mask"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Subnet Mask"
+                app:layout_constraintStart_toStartOf="@+id/textInputLayout_ip"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout_ip">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_gateway"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Default Gateway"
+                app:layout_constraintStart_toStartOf="@+id/textInputLayout_mask"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout_mask">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_mac"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="MAC Address"
+                app:layout_constraintStart_toStartOf="@+id/textInputLayout_gateway"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout_gateway">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </ScrollView>
+
     <Button
         android:id="@+id/confirm_btn"
         android:layout_width="0dp"
@@ -63,152 +225,6 @@
     <!--            android:cursorVisible="false"-->
     <!--            android:focusableInTouchMode="false" />-->
     <!--    </com.google.android.material.textfield.TextInputLayout>-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_ssid"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="SSID"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/unit_group">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!--    <com.google.android.material.textfield.TextInputLayout-->
-    <!--        android:id="@+id/textInputLayout_min"-->
-    <!--        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"-->
-    <!--        android:cursorVisible="false"-->
-    <!--        android:layout_width="100dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="8dp"-->
-    <!--        android:hint="Min"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/textInputLayout_max"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_max"-->
-    <!--        app:suffixText="°C">-->
-
-    <!--        <com.google.android.material.textfield.TextInputEditText-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:inputType="text"-->
-    <!--            android:maxLines="1"-->
-    <!--            android:cursorVisible="false"-->
-    <!--            android:focusableInTouchMode="false" />-->
-    <!--    </com.google.android.material.textfield.TextInputLayout>-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_password"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Password"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout_ssid"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_ssid">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!--    <com.google.android.material.textfield.TextInputLayout-->
-    <!--        android:id="@+id/textInputLayout_offset"-->
-    <!--        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"-->
-    <!--        android:cursorVisible="false"-->
-    <!--        android:layout_width="100dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="8dp"-->
-    <!--        android:hint="Offset"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/textInputLayout_min"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_min"-->
-    <!--        app:suffixText="°C" >-->
-
-    <!--        <com.google.android.material.textfield.TextInputEditText-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:inputType="text"-->
-    <!--            android:maxLines="1"-->
-    <!--            android:cursorVisible="false"-->
-    <!--            android:focusableInTouchMode="false" />-->
-    <!--    </com.google.android.material.textfield.TextInputLayout>-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_ip"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="IP Address"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout_password"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_password">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_mask"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Subnet Mask"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout_ip"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_ip">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_gateway"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Default Gateway"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout_mask"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_mask">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_mac"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="MAC Address"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout_gateway"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_gateway">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/progress_view"

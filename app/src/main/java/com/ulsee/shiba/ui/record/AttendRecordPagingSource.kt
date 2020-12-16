@@ -103,7 +103,7 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository, p
     }
 
     private fun parseTime(time: String): Date? {
-        val pattern = "yyyy-MM-dd HH:mm:ss.SSS"
+        val pattern = "yyyy-MM-dd HH:mm:ss"
         val simpleDateFormat = SimpleDateFormat(pattern)
         return try {
             simpleDateFormat.parse(time)

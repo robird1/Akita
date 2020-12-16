@@ -34,7 +34,7 @@ class SettingViewModel(private val repository: SettingRepository) : ViewModel() 
         }
     }
 
-    private fun isQuerySuccess(response: getUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: getUIConfig) = response.status == 0
 
 }
 

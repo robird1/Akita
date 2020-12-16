@@ -28,7 +28,7 @@ class TemperatureViewModel(private val repository: SettingRepository) : ViewMode
         }
     }
 
-    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: SetUIConfig) = response.status == 0
 
     private fun createJsonRequestBody(max: String, min: String, offset: String, unit: String): RequestBody {
         val tmp = "{\r\n\r\n    \"FaceUIConfig\" : {\r\n\r\n       \"temperatureUnit\": \"${unit}\",\r\n\r\n       " +

@@ -86,8 +86,8 @@ private var _deviceTime = MutableLiveData<Long>()
     }
 
 
-    private fun isGetTimeSuccess(response: GetTime) = response.status == 0 && response.detail == "ok"
-    private fun isSetTimeSuccess(response: SetTime) = response.status == 0 && response.detail == "ok"
+    private fun isGetTimeSuccess(response: GetTime) = response.status == 0
+    private fun isSetTimeSuccess(response: SetTime) = response.status == 0
 
     private fun createJsonRequestBody(): RequestBody {
         val c = Calendar.getInstance()

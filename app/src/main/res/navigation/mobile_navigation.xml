@@ -112,6 +112,9 @@
             android:id="@+id/action_to_capture_config"
             app:destination="@id/capture_config" />
         <action
+            android:id="@+id/action_to_mask_config"
+            app:destination="@id/mask_config" />
+        <action
             android:id="@+id/action_to_connect_mode"
             app:destination="@id/wifi_config" />
     </fragment>
@@ -251,6 +254,22 @@
     <fragment
         android:id="@+id/wifi_config"
         android:name="com.ulsee.shiba.ui.device.settings.ConnectModeFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_connect_mode">
+        <argument
+            android:name="url"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_to_device_settings"
+            app:destination="@id/navigation_device"
+            app:popUpTo="@id/navigation_device"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/mask_config"
+        android:name="com.ulsee.shiba.ui.device.settings.MaskFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_connect_mode">
         <argument

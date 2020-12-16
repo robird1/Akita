@@ -1,5 +1,6 @@
 package com.ulsee.shiba.ui.device.settings
 
+import android.Manifest
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -56,15 +57,18 @@ class SettingAdapter(private val viewModel: SettingViewModel, private val fragme
 
 private class AttributeInstance(position: Int, config: FaceUIConfig?) {
     val instance = when(position) {
-        SettingAttributes.POSITION_WIFI -> WiFi(config)
         SettingAttributes.POSITION_VOLUME -> Volume(config)
         SettingAttributes.POSITION_LANGUAGE -> Language(config)
         SettingAttributes.POSITION_TEMPERATURE -> Temperature(config)
         SettingAttributes.POSITION_PANEL_UI -> PanelUI(config)
         SettingAttributes.POSITION_LIGHT_MODE -> LightMode(config)
-        SettingAttributes.POSITION_CAPTURE -> Capture(config)
+//        SettingAttributes.POSITION_CAPTURE -> Capture(config)
+        SettingAttributes.POSITION_MASK -> Mask(config)
+
         SettingAttributes.POSITION_TIME -> Time(config)
-        SettingAttributes.POSITION_OTHERS -> Others(config)
+//        SettingAttributes.POSITION_OTHERS -> Others(config)
+        SettingAttributes.POSITION_WIFI -> WiFi(config)
+
         else -> Unknown(config)
     }
 
@@ -85,16 +89,18 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
     abstract fun onClick(fragment: Fragment, url: String)
 
     companion object {
-        const val ITEM_COUNT = 9
-        const val POSITION_WIFI = 0
-        const val POSITION_VOLUME = 1
-        const val POSITION_LANGUAGE = 2
-        const val POSITION_TEMPERATURE = 3
-        const val POSITION_PANEL_UI = 4
-        const val POSITION_LIGHT_MODE = 5
-        const val POSITION_CAPTURE = 6
-        const val POSITION_TIME = 7
-        const val POSITION_OTHERS = 8
+        const val ITEM_COUNT = 8
+        const val POSITION_VOLUME = 0
+        const val POSITION_LANGUAGE = 1
+        const val POSITION_TEMPERATURE = 2
+        const val POSITION_PANEL_UI = 3
+        const val POSITION_LIGHT_MODE = 4
+//        const val POSITION_CAPTURE = 6
+        const val POSITION_MASK = 5
+        const val POSITION_TIME = 6
+        const val POSITION_WIFI = 7
+
+//        const val POSITION_OTHERS = 8
     }
 }
 
@@ -102,13 +108,16 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
 class WiFi(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {
         super.setValue(itemView)
-        configName?.text = "Wi-Fi"
+        configName?.text = "Wireless Settings"
         configValue?.text = ""
     }
 
     override fun onClick(fragment: Fragment, url: String) {
-        val action = SettingFragmentDirections.actionToConnectMode(url)
-        fragment.findNavController().navigate(action)
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE)
+        fragment.requestPermissions(permissions, REQUEST_PERMISSION_WIFI)
     }
 }
 
@@ -181,7 +190,7 @@ class PanelUI(config: FaceUIConfig?): SettingAttributes(config) {
         if (config != null) {
             val args = PanelUIData(
                 config.show_ip, config.show_mac_address, config.show_frame,
-                config.show_recognize_area,
+                config.show_temperature_area,
                 config.show_body_temperature, url
             )
             val action = SettingFragmentDirections.actionToPanelUiConfig(args)
@@ -208,15 +217,27 @@ class LightMode(config: FaceUIConfig?): SettingAttributes(config) {
     }
 }
 
-class Capture(config: FaceUIConfig?): SettingAttributes(config) {
+//class Capture(config: FaceUIConfig?): SettingAttributes(config) {
+//    override fun setValue(itemView: View) {
+//        super.setValue(itemView)
+//        configName?.text = "Capture Attributes"
+//        configValue?.text = ""
+//    }
+//
+//    override fun onClick(fragment: Fragment, url: String) {
+//        val action = SettingFragmentDirections.actionToCaptureConfig(url)
+//        fragment.findNavController().navigate(action)
+//    }
+//}
+class Mask(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {
         super.setValue(itemView)
-        configName?.text = "Capture Attributes"
+        configName?.text = "Mask Attribute"
         configValue?.text = ""
     }
 
     override fun onClick(fragment: Fragment, url: String) {
-        val action = SettingFragmentDirections.actionToCaptureConfig(url)
+        val action = SettingFragmentDirections.actionToMaskConfig(url)
         fragment.findNavController().navigate(action)
     }
 }
@@ -235,21 +256,21 @@ class Time(config: FaceUIConfig?): SettingAttributes(config) {
 }
 
 
-class Others(config: FaceUIConfig?): SettingAttributes(config) {
-    override fun setValue(itemView: View) {
-        super.setValue(itemView)
-        configName?.text = "Others"
-        configValue?.text = ""
-    }
-
-    override fun onClick(fragment: Fragment, url: String) {
-        if (config != null) {
-            val args = OthersConfigData(config.enableSingleWarning, config.enableLiveness, url)
-            val action = SettingFragmentDirections.actionToOthersConfig(args)
-            fragment.findNavController().navigate(action)
-        }
-    }
-}
+//class Others(config: FaceUIConfig?): SettingAttributes(config) {
+//    override fun setValue(itemView: View) {
+//        super.setValue(itemView)
+//        configName?.text = "Others"
+//        configValue?.text = ""
+//    }
+//
+//    override fun onClick(fragment: Fragment, url: String) {
+//        if (config != null) {
+//            val args = OthersConfigData(config.enableSingleWarning, config.enableLiveness, url)
+//            val action = SettingFragmentDirections.actionToOthersConfig(args)
+//            fragment.findNavController().navigate(action)
+//        }
+//    }
+//}
 
 
 class Unknown(config: FaceUIConfig?): SettingAttributes(config) {

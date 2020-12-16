@@ -40,7 +40,7 @@ class VlcRtspActivity: AppCompatActivity() {
 
         // Get URL
         val intent = intent
-        val rtspUrl = intent.extras!!.getString(RTSP_URL)
+        val rtspUrl = intent.extras!!.getString(RTSP_URL) + ":554/h264/ch01/main/av_stream"
         Log.d(TAG, "Playing back $rtspUrl")
         mSurface = findViewById<View>(R.id.surfaceView) as SurfaceView
         holder = mSurface!!.holder

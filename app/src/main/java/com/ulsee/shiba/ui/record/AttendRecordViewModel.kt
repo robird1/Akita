@@ -123,9 +123,9 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
         _errorCode = -1
     }
 
-    private fun isQuerySuccess(response: getUIConfig) = response.status == 0 && response.detail == "success"
-    private fun isClearSuccess(response: ClearAttendRecord) = response.status == 0 && response.detail == "success"
-    private fun isQuerySuccess(response: GetAttendRecordCount) = response.status == 0 && response.detail == "success"
+    private fun isQuerySuccess(response: getUIConfig) = response.status == 0
+    private fun isClearSuccess(response: ClearAttendRecord) = response.status == 0
+    private fun isQuerySuccess(response: GetAttendRecordCount) = response.status == 0
 
     private fun createClearRequestBody(): RequestBody {
         val tmp = "{\r\n    \"clearBy\" : \"AllRecords\"\r\n}"

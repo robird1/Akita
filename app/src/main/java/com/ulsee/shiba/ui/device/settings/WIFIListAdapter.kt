@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ulsee.shiba.R
 import com.ulsee.shiba.model.WIFIInfo
 
-class WIFIListAdapter(private val activity: WIFIListActivity)  : RecyclerView.Adapter<WIFIListAdapter.ViewHolder>() {
+class WifiListAdapter(private val activity: WIFIListActivity)  : RecyclerView.Adapter<WifiListAdapter.ViewHolder>() {
 
     private var wifiList : List<WIFIInfo> = ArrayList()
     fun setList(list: List<WIFIInfo>) {

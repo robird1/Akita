@@ -4,12 +4,11 @@
     package="com.ulsee.shiba">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /><!-- scan wifi -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> <!-- scan wifi -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- scan wifi -->
-<!--    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/> &lt;!&ndash; change wifi &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/> &lt;!&ndash; change wifi for Android 10 &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> &lt;!&ndash; scan wifi &ndash;&gt;-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- scan wifi    Android 9, 10 or higher -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>    <!-- scan wifi    Android 9, 10 or higher -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />   <!-- scan wifi    Android 10 -->
+<!--        <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/> &lt;!&ndash; change wifi for Android 10 &ndash;&gt;-->
 
     <application
         android:name="com.ulsee.shiba.App"

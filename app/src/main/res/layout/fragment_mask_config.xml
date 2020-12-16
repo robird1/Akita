@@ -39,31 +39,8 @@
                 android:id="@+id/checkBox_ip"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show IP" />
+                android:text="Mask Recognition" />
 
-            <CheckBox
-                android:id="@+id/checkBox_mac"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Show MAC" />
-
-            <CheckBox
-                android:id="@+id/checkBox_frame"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Show Tracking Frame" />
-
-            <CheckBox
-                android:id="@+id/checkBox_temperature_area"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Show Temperature Area" />
-
-            <CheckBox
-                android:id="@+id/checkBox_temperature"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Show Body Temperature" />
         </LinearLayout>
     </ScrollView>
 

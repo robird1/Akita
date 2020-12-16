@@ -4,7 +4,7 @@ import com.ulsee.shiba.api.ApiService
 import com.ulsee.shiba.data.response.*
 import okhttp3.RequestBody
 
-class SettingRepository(private val url: String) {
+class SettingRepository(private var url: String) {
     suspend fun getDeviceConfig(): getUIConfig {
         return ApiService.create(url).getDeviceConfig()
     }
@@ -21,19 +21,23 @@ class SettingRepository(private val url: String) {
         return ApiService.create(url).setTime(requestBody)
     }
 
+    // used by capture settings
     suspend fun getComSettings(requestBody: RequestBody): GetComSettings {
         return ApiService.create(url).getComSettings(requestBody)
     }
 
+    // used by capture settings
     suspend fun setComSettings(requestBody: RequestBody): SetComSettings {
         return ApiService.create(url).setComSettings(requestBody)
     }
 
     suspend fun getWifiConfig(): GetWifiConfig {
+        url = url.replace(":8080", ":8081")
         return ApiService.create(url).getWifiConfig()
     }
 
     suspend fun setWifiConfig(requestBody: RequestBody): SetWifiConfig {
+        url = url.replace(":8080", ":8081")
         return ApiService.create(url).setWifiConfig(requestBody)
     }
 

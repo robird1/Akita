@@ -9,9 +9,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-private val TAG = CaptureViewModel::class.java.simpleName
+private val TAG = MaskViewModel::class.java.simpleName
 
-class CaptureViewModel(private val repository: SettingRepository) : ViewModel() {
+class MaskViewModel(private val repository: SettingRepository) : ViewModel() {
     private var _getResult = MutableLiveData<CommonSettings>()
     val getResult: LiveData<CommonSettings>
         get() = _getResult
@@ -66,16 +66,16 @@ class CaptureViewModel(private val repository: SettingRepository) : ViewModel() 
 }
 
 
-data class SetConfig(val attributeEnable: Boolean, val attributeInterval: Int,
-                     val temperatureEnable: Boolean, val maskEnable: Boolean, val logEnable:Boolean,
-                     val logInterval: Int, val strangerEnable: Boolean)
+//data class SetConfig(val attributeEnable: Boolean, val attributeInterval: Int,
+//                     val temperatureEnable: Boolean, val maskEnable: Boolean, val logEnable:Boolean,
+//                     val logInterval: Int, val strangerEnable: Boolean)
 
 
-class CaptureFactory(private val repository: SettingRepository) : ViewModelProvider.Factory {
+class MaskFactory(private val repository: SettingRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CaptureViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(MaskViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return CaptureViewModel(repository) as T
+            return MaskViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

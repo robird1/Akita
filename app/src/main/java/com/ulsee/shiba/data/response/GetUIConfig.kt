@@ -42,6 +42,7 @@ data class FaceUIConfig(
     val offsetBodyTemperature: Double,
     val offsetEnvTemperature: Int,
     val show_body_temperature: Boolean,
+    val show_temperature_area: Boolean,
     val show_frame: Boolean,
     val show_ip: Boolean,
     val show_mac_address: Boolean,
