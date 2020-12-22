@@ -21,10 +21,10 @@ class MaskViewModel(private val repository: SettingRepository) : ViewModel() {
 
 
     init {
-        getCaptureConfigs()
+        getConfig()
     }
 
-    private fun getCaptureConfigs() {
+    private fun getConfig() {
         viewModelScope.launch {
             try {
                 val response = repository.getComSettings(createJsonRequestBody())
@@ -38,10 +38,10 @@ class MaskViewModel(private val repository: SettingRepository) : ViewModel() {
         }
     }
 
-    fun setCaptureConfigs(data: SetConfig) {
+    fun setConfig(isChecked: Boolean) {
         viewModelScope.launch {
             try {
-                val response = repository.setComSettings(createJsonRequestBody(data))
+                val response = repository.setComSettings(createJsonRequestBody(isChecked))
                 _setResult.value = isSetComSuccess(response)
             } catch (e: Exception) {
                 _setResult.value = false
@@ -56,19 +56,11 @@ class MaskViewModel(private val repository: SettingRepository) : ViewModel() {
         return "{\r\n    \"CameraId\" : 0\r\n}".toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 
-    private fun createJsonRequestBody(data: SetConfig): RequestBody {
-        val tmp = "{\r\n    \"CameraId\" : 0,\r\n    \"commonSettings\" : {\r\n        \"attributeRecog\" : \"${data.attributeEnable}\",\r\n" +
-                "        \"attrInterval\": ${data.attributeInterval},\r\n        \"recogBodyTemperature\" : \"${data.temperatureEnable}\",\r\n " +
-                "       \"recogRespirator\" : \"${data.maskEnable}\",\r\n        \"enableStoreAttendLog\": \"${data.logEnable}\",\r\n" +
-                "        \"attendInterval\": ${data.logInterval},\r\n        \"enableStoreStrangerAttLog\": \"${data.strangerEnable}\"\r\n    }\r\n}"
+    private fun createJsonRequestBody(isChecked: Boolean): RequestBody {
+        val tmp = "{\r\n    \"CameraId\" : 0,\r\n    \"commonSettings\" : {\r\n        \"recogRespirator\" : \"$isChecked\"\r\n    }\r\n}"
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 }
-
-
-//data class SetConfig(val attributeEnable: Boolean, val attributeInterval: Int,
-//                     val temperatureEnable: Boolean, val maskEnable: Boolean, val logEnable:Boolean,
-//                     val logInterval: Int, val strangerEnable: Boolean)
 
 
 class MaskFactory(private val repository: SettingRepository) : ViewModelProvider.Factory {

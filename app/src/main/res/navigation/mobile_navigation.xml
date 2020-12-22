@@ -271,15 +271,15 @@
         android:id="@+id/mask_config"
         android:name="com.ulsee.shiba.ui.device.settings.MaskFragment"
         android:label="@string/title_settings"
-        tools:layout="@layout/fragment_connect_mode">
+        tools:layout="@layout/fragment_mask_config">
         <argument
             android:name="url"
             android:defaultValue=""
             app:argType="string" />
         <action
             android:id="@+id/action_to_device_settings"
-            app:destination="@id/navigation_device"
-            app:popUpTo="@id/navigation_device"
+            app:destination="@id/device_settings"
+            app:popUpTo="@id/device_settings"
             app:launchSingleTop="true"/>
     </fragment>
 

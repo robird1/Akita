@@ -36,7 +36,7 @@
             android:orientation="vertical">
 
             <CheckBox
-                android:id="@+id/checkBox_ip"
+                android:id="@+id/checkBox_mask"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="Mask Recognition" />
