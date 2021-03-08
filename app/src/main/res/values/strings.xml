@@ -52,6 +52,6 @@
 
     <string name="title_alert_notification">Notification</string>
     <string name="notification">Notification</string>
-    <string name="fever_notification">Fever Notification</string>
+    <string name="fever_notification">Heat Notification</string>
 
 </resources>

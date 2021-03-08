@@ -40,7 +40,7 @@ class TemperatureFragment: Fragment() {
         configFooterButton()
         observeSetDeviceConfig()
 
-        (activity as MainActivity).setTitle("Body Temperature")
+        (activity as MainActivity).setTitle("Heat Recognition")
 
         return binding.root
     }

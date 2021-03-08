@@ -16,14 +16,14 @@ import java.util.*
 private const val RECORD_QUERY_COUNT = 10
 private val TAG = AttendRecordPagingSource::class.java.simpleName
 
-class AttendRecordPagingSource(private val repository: AttendRecordRepository, private val totalCount: Int) : PagingSource<Int, AttendRecord>() {
+class AttendRecordPagingSource(private val repository: AttendRecordRepository, private val totalCount: Int, private val defaultStartId: Int, private val endId: Int) : PagingSource<Int, AttendRecord>() {
     private var lastStartId: Int = -1
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AttendRecord> {
-        val startId = params.key ?: getDefaultStartIndex()
-//        Log.d(TAG, "[Enter] load() startId: $startId")
+        val startId = params.key ?: getStartIndex()
 
         return try {
+            Log.d(TAG, "lastStartId: $lastStartId")
             val requestBody = createJsonRequestBody("startId" to startId, "reqCount" to getRequestCount(startId))
             val records = repository.requestAttendRecord(requestBody)
 //            Log.d(TAG, "record size: " + records.recordCount)
@@ -54,43 +54,42 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository, p
         }
     }
 
+    private fun getPreviousKey(startId: Int): Int? {
+        Log.d(TAG, "[Enter] getPreviousKey")
+        return if (startId == endId - RECORD_QUERY_COUNT) {
+            Log.d(TAG, "previous key = null")
+            null
+        } else {
+            Log.d(TAG, "previous key = ${(startId + RECORD_QUERY_COUNT)}")
+            startId + RECORD_QUERY_COUNT
+        }
+    }
+
+    private fun getNextKey(startId: Int): Int? {
+        Log.d(TAG, "[Enter] getNextKey")
+        return if (startId < defaultStartId) {
+            Log.d(TAG, "next key = null")
+            null
+        } else {
+            Log.d(TAG, "next key = ${(startId - RECORD_QUERY_COUNT)}")
+            (startId - RECORD_QUERY_COUNT)
+        }
+    }
+
     private fun getRequestCount(startId: Int): Int {
-        return if (startId != -1) {           // the remaining data count is more than RECORD_QUERY_COUNT
+        return if (startId >= defaultStartId) {
             RECORD_QUERY_COUNT
-
-        } else {                              // the remaining data count is less than RECORD_QUERY_COUNT
-
+        } else {
             if (lastStartId != -1) {          // the last page of the list data
-                lastStartId
+                lastStartId - defaultStartId + 1
             } else {                         // the total count of the list data is less than RECORD_QUERY_COUNT
                 totalCount
             }
         }
     }
 
-    private fun getPreviousKey(startId: Int): Int? {
-//        if (startId == getDefaultStartIndex()) null else startId + RECORD_QUERY_COUNT
-        return if (startId == -1) {
-            if (lastStartId != -1) {          // the last page of the list data
-                lastStartId
-            } else {                         // the total count of the list data is less than RECORD_QUERY_COUNT
-                null
-            }
-        } else if (startId == totalCount - RECORD_QUERY_COUNT) {
-            null
-        } else {
-            startId + RECORD_QUERY_COUNT
-        }
-    }
-
-    private fun getNextKey(startId: Int): Int? {
-        if (startId == -1) return null
-        return if (startId > RECORD_QUERY_COUNT) { startId - RECORD_QUERY_COUNT } else -1
-    }
-
-    private fun getDefaultStartIndex(): Int {
-        val index = totalCount - RECORD_QUERY_COUNT
-        return if (index > 0) index else -1
+    private fun getStartIndex(): Int {
+        return endId - RECORD_QUERY_COUNT
     }
 
 //    private fun createJsonRequestBody(vararg params: Pair<String, Int>) =
@@ -98,7 +97,7 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository, p
 
     private fun createJsonRequestBody(vararg params: Pair<String, Int>): RequestBody {
         val tmp = JSONObject(mapOf(*params, "needImg" to true)).toString()
-//        Log.d(TAG, "JSONObject toString: $tmp")
+        Log.d(TAG, "JSONObject toString: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 
@@ -111,4 +110,10 @@ class AttendRecordPagingSource(private val repository: AttendRecordRepository, p
             simpleDateFormat.parse("1970-01-01 00:00:00")
         }
     }
+//    override fun getRefreshKey(state: PagingState<Int, AttendRecord>): Int? {
+//        return state.anchorPosition
+//    }
+//
+//    override val jumpingSupported = true
+
 }

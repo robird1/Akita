@@ -18,10 +18,11 @@ class RecordInfoActivity: AppCompatActivity() {
 
         val data = intent.getBundleExtra("bundle")
         data?.let {
-            showName(it)
+//            showName(it)
             showTemperature(it)
-            showAge(it)
-            showGender(it)
+//            showAge(it)
+            showMask(it)
+//            showGender(it)
             showDate(it)
             showFaceImg()
         }
@@ -36,21 +37,30 @@ class RecordInfoActivity: AppCompatActivity() {
         }
     }
 
-    private fun showGender(it: Bundle) {
-        val genderValue = it.getString("gender", "")
-        if (genderValue == "0") {
-            binding.recordInfoGender.text = "male"
-        } else {
-            binding.recordInfoGender.text = "female"
-        }
-    }
+//    private fun showGender(it: Bundle) {
+//        val genderValue = it.getString("gender", "")
+//        if (genderValue == "0") {
+//            binding.recordInfoGender.text = "male"
+//        } else {
+//            binding.recordInfoGender.text = "female"
+//        }
+//    }
+//
+//    private fun showAge(it: Bundle) {
+//        val ageValue = it.getInt("age", 0)
+//        if (ageValue == 0) {
+//            binding.recordInfoAge.text = ""
+//        } else {
+//            binding.recordInfoAge.text = ageValue.toString()
+//        }
+//    }
 
-    private fun showAge(it: Bundle) {
-        val ageValue = it.getInt("age", 0)
-        if (ageValue == 0) {
-            binding.recordInfoAge.text = ""
+    private fun showMask(it: Bundle) {
+        val maskValue = it.getInt("mask", 0)
+        if (maskValue == 0) {
+            binding.recordInfoMask.text = "No"
         } else {
-            binding.recordInfoAge.text = ageValue.toString()
+            binding.recordInfoMask.text = "Yes"
         }
     }
 
@@ -62,8 +72,8 @@ class RecordInfoActivity: AppCompatActivity() {
         binding.recordInfoDate.text = it.getString("date", "").split(".")[0]
     }
 
-    private fun showName(it: Bundle) {
-        binding.recordInfoName.text = it.getString("name", "")
-    }
+//    private fun showName(it: Bundle) {
+//        binding.recordInfoName.text = it.getString("name", "")
+//    }
 
 }

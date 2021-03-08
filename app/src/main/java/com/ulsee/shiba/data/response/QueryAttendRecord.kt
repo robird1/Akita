@@ -1,12 +1,19 @@
 package com.ulsee.shiba.data.response
 
+//data class GetAttendRecordCount(
+//    val command: Int,
+//    val detail: String,
+//    val startId: Int,
+//    val status: Int,
+//    val totalCount: Int,
+//    val transmit_cast: Int
+//)
 data class GetAttendRecordCount(
-    val command: Int,
     val detail: String,
     val startId: Int,
     val status: Int,
     val totalCount: Int,
-    val transmit_cast: Int
+    val endId: Int
 )
 
 data class QueryAttendRecord(

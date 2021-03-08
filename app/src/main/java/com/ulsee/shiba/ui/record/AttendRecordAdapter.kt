@@ -76,7 +76,7 @@ class AttendRecordAdapter : PagingDataAdapter<AttendRecord, RecyclerView.ViewHol
 //                bundle.putString("img", it.img)
                     ImageTemp.imgBase64 = it.img
                     bundle.putString("name", it.name)
-                    bundle.putInt("age", it.age)
+                    bundle.putInt("mask", it.respirator)
                     bundle.putString("gender", it.gender)
                     bundle.putString("country", it.country)
                     bundle.putString("date", it.timestamp)

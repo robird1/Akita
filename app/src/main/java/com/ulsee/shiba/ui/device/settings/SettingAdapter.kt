@@ -63,7 +63,7 @@ private class AttributeInstance(position: Int, config: FaceUIConfig?) {
         SettingAttributes.POSITION_PANEL_UI -> PanelUI(config)
         SettingAttributes.POSITION_LIGHT_MODE -> LightMode(config)
 //        SettingAttributes.POSITION_CAPTURE -> Capture(config)
-        SettingAttributes.POSITION_MASK -> Mask(config)
+//        SettingAttributes.POSITION_MASK -> Mask(config)
 
         SettingAttributes.POSITION_TIME -> Time(config)
 //        SettingAttributes.POSITION_OTHERS -> Others(config)
@@ -89,16 +89,16 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
     abstract fun onClick(fragment: Fragment, url: String)
 
     companion object {
-        const val ITEM_COUNT = 8
+        const val ITEM_COUNT = 7
         const val POSITION_VOLUME = 0
         const val POSITION_LANGUAGE = 1
         const val POSITION_TEMPERATURE = 2
         const val POSITION_PANEL_UI = 3
         const val POSITION_LIGHT_MODE = 4
 //        const val POSITION_CAPTURE = 6
-        const val POSITION_MASK = 5
-        const val POSITION_TIME = 6
-        const val POSITION_WIFI = 7
+//        const val POSITION_MASK = 5
+        const val POSITION_TIME = 5
+        const val POSITION_WIFI = 6
 
 //        const val POSITION_OTHERS = 8
     }
@@ -158,7 +158,7 @@ class Language(config: FaceUIConfig?): SettingAttributes(config) {
 class Temperature(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {
         super.setValue(itemView)
-        configName?.text = "Body Temperature"
+        configName?.text = "Heat Recognition"
         var value = ""
         if (config != null) {
             value = "${String.format("%.1f", config.minBodyTemperature)} - ${String.format("%.1f", config.maxBodyTemperature)} °${config.temperatureUnit}"
@@ -229,18 +229,18 @@ class LightMode(config: FaceUIConfig?): SettingAttributes(config) {
 //        fragment.findNavController().navigate(action)
 //    }
 //}
-class Mask(config: FaceUIConfig?): SettingAttributes(config) {
-    override fun setValue(itemView: View) {
-        super.setValue(itemView)
-        configName?.text = "Mask Attribute"
-        configValue?.text = ""
-    }
-
-    override fun onClick(fragment: Fragment, url: String) {
-        val action = SettingFragmentDirections.actionToMaskConfig(url)
-        fragment.findNavController().navigate(action)
-    }
-}
+//class Mask(config: FaceUIConfig?): SettingAttributes(config) {
+//    override fun setValue(itemView: View) {
+//        super.setValue(itemView)
+//        configName?.text = "Mask Attribute"
+//        configValue?.text = ""
+//    }
+//
+//    override fun onClick(fragment: Fragment, url: String) {
+//        val action = SettingFragmentDirections.actionToMaskConfig(url)
+//        fragment.findNavController().navigate(action)
+//    }
+//}
 
 class Time(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {

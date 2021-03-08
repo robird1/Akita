@@ -32,6 +32,8 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
 
     private var currentSearchResult: Flow<PagingData<AttendRecord>>? = null
     private var totalCount = 0
+    private var startId = 0
+    private var endId = 0
     private var _errorCode = -1
     val errorCode: Int
         get() = _errorCode
@@ -42,12 +44,12 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
     }
 
     fun getRecords(): Flow<PagingData<AttendRecord>> {
-//    Log.d(TAG, "[Enter] getRecords()")
+//        Log.d(TAG, "[Enter] getRecords()")
 //    val lastResult = currentSearchResult
 //    if (lastResult != null) {
 //        return lastResult
 //    }
-        val newResult: Flow<PagingData<AttendRecord>> = repository.getSearchResultStream(totalCount).cachedIn(viewModelScope)
+        val newResult: Flow<PagingData<AttendRecord>> = repository.getSearchResultStream(totalCount, startId, endId).cachedIn(viewModelScope)
         currentSearchResult = newResult
         return newResult
     }
@@ -65,6 +67,8 @@ class AttendRecordViewModel(private val repository: AttendRecordRepository) : Vi
                 if (isSuccess) {
                     Log.d(TAG, "query success!! total count: ${response.totalCount}")
                     totalCount = response.totalCount
+                    startId = response.startId
+                    endId = response.endId
                     _recordCountResult.value = true
                 } else {
                     Log.d(TAG, "query failed!!")
