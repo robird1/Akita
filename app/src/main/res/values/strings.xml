@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AI Infrared AKITA</string>
     <string name="title_device">Device</string>
-    <string name="title_people">People Management</string>
+    <string name="title_people">ID Management</string>
     <string name="title_notification">Records</string>
     <string name="title_settings">Settings</string>
 
@@ -52,6 +52,6 @@
 
     <string name="title_alert_notification">Notification</string>
     <string name="notification">Notification</string>
-    <string name="fever_notification">Fever Notification</string>
+    <string name="fever_notification">Heat Notification</string>
 
 </resources>

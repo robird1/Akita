@@ -133,7 +133,7 @@ class Language(config: FaceUIConfig?): SettingAttributes(config) {
 class Temperature(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {
         super.setValue(itemView)
-        configName?.text = "Body Temperature"
+        configName?.text = "Heat Recognition"
         var value = ""
         if (config != null) {
             value = "${String.format("%.1f", config.minBodyTemperature)} - ${String.format("%.1f", config.maxBodyTemperature)} °${config.temperatureUnit}"

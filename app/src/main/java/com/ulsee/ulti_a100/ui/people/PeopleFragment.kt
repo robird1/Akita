@@ -448,7 +448,7 @@ class PeopleFragment : Fragment(), RecyclerItemTouchHelper.ItemTouchListener,
     }
 
     private fun setFragmentTitle() {
-        (activity as MainActivity).setTitle("People Management")
+        (activity as MainActivity).setTitle("ID Management")
     }
 
     private fun closeProgressView() {
