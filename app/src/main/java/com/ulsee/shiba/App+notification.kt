@@ -28,6 +28,8 @@ class DeviceNotificationInfo {
     var maxTemp = 0.0
     var deferred : Deferred<Unit>? = null
     var temperatureUnit = "C"
+    var oldNotificationCount : Int = 0 // 第一次開啟APP，檢查舊的通知數量
+    var skippedNotificationCount : Int = 0 // 已忽略的舊的通知的數量
 }
 
 fun App.listenNotification() {
@@ -91,28 +93,28 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
     val key = attendRecordRepository.url
     val isFirstFetchNotifications = notificationInfoMap[key]!!.startId == null
     try {
-//        if (isFirstFetchNotifications) { // fetch total count first
-//            val response = attendRecordRepository.requestAttendRecordCount()
-//            notificationInfoMap[key]!!.startId = response.totalCount
-//            Log.d(TAG, "listenNotification $key got totalCount ${response.totalCount}")
-//            notificationInfoMap[key]?.deferred = null // finish
-//            return
-//        }
+        if (isFirstFetchNotifications) { // fetch total count first
+            val response = attendRecordRepository.requestAttendRecordCount()
+            notificationInfoMap[key]?.oldNotificationCount = response.totalCount
+            Log.d(TAG, "listenNotification isFirstFetchNotifications,oldNotificationCount is ${response.totalCount}")
+            notificationInfoMap[key]!!.startId = 0
+        }
 
         val startId = notificationInfoMap[key]!!.startId ?: 0
         val requestBody = createJsonRequestBody("startId" to startId, "reqCount" to recordQueryCount)
         Log.d(TAG, "listenNotification $key request from ${startId}, reqCount=${recordQueryCount}")
         val records = attendRecordRepository.requestAttendRecord(requestBody)
 
+//        if (isFirstFetchNotifications) {
+//            notificationInfoMap[key]!!.startId = getMaxID(records.data ?: ArrayList<AttendRecord>())
+//            Log.d(TAG, "listenNotification isFirstFetchNotifications, startId set to ${notificationInfoMap[key]!!.startId}")
+//            notificationInfoMap[key]?.deferred = null // finish, continue next async
+//            return
+//        }
+
         if (records.recordCount == 0) {
             Log.d(TAG, "listenNotification $key, recordCount= 0")
-            notificationInfoMap[key]?.deferred = null // finish
-            return
-        }
-
-        if (isFirstFetchNotifications) {
-            notificationInfoMap[key]!!.startId = getMaxID(records.data ?: ArrayList<AttendRecord>())
-            Log.d(TAG, "listenNotification isFirstFetchNotifications, startId set to ${notificationInfoMap[key]!!.startId}")
+            notificationInfoMap[key]?.deferred = null // finish, continue next async
             return
         }
 
@@ -120,6 +122,10 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
 
         if (records.data != null && records.data.isNotEmpty()) {
             for (notification in records.data) {
+                if (notificationInfoMap[key]!!.skippedNotificationCount < notificationInfoMap[key]!!.oldNotificationCount) {
+                    notificationInfoMap[key]!!.skippedNotificationCount += 1
+                    continue
+                }
                 var temp = notification.bodyTemperature.toDouble()
                 if (notificationInfoMap[key]!!.temperatureUnit == "F") temp = temp * 9 /5 + 32
 //                val isTempTooLow = temp < notificationInfoMap[key]!!.minTemp
@@ -138,9 +144,10 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
     } catch (exception: HttpException) {
         Log.d(TAG, "listenNotification, $key HttpException: "+ exception.message)
     } catch (exception: Exception) {
+        exception.printStackTrace()
         Log.d(TAG, "listenNotification, $key Exception: "+ exception.message)
     }
-    notificationInfoMap[key]?.deferred = null // finish
+    notificationInfoMap[key]?.deferred = null // finish, continue next async
 }
 
 private fun App.getMaxID(notifications: List<AttendRecord>) : Int {
