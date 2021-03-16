@@ -32,7 +32,7 @@ class DeviceNotificationInfo {
 
 fun App.listenNotification() {
     job = GlobalScope.launch {
-        
+
         val notificationInfoMap = HashMap<String,DeviceNotificationInfo>()
 
         while(true) {
@@ -91,15 +91,15 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
     val key = attendRecordRepository.url
     val isFirstFetchNotifications = notificationInfoMap[key]!!.startId == null
     try {
-        if (isFirstFetchNotifications) { // fetch total count first
-            val response = attendRecordRepository.requestAttendRecordCount()
-            notificationInfoMap[key]!!.startId = response.totalCount
-            Log.d(TAG, "listenNotification $key got totalCount ${response.totalCount}")
-            notificationInfoMap[key]?.deferred = null // finish
-            return
-        }
+//        if (isFirstFetchNotifications) { // fetch total count first
+//            val response = attendRecordRepository.requestAttendRecordCount()
+//            notificationInfoMap[key]!!.startId = response.totalCount
+//            Log.d(TAG, "listenNotification $key got totalCount ${response.totalCount}")
+//            notificationInfoMap[key]?.deferred = null // finish
+//            return
+//        }
 
-        val startId = notificationInfoMap[key]!!.startId!!
+        val startId = notificationInfoMap[key]!!.startId ?: 0
         val requestBody = createJsonRequestBody("startId" to startId, "reqCount" to recordQueryCount)
         Log.d(TAG, "listenNotification $key request from ${startId}, reqCount=${recordQueryCount}")
         val records = attendRecordRepository.requestAttendRecord(requestBody)
@@ -107,6 +107,12 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
         if (records.recordCount == 0) {
             Log.d(TAG, "listenNotification $key, recordCount= 0")
             notificationInfoMap[key]?.deferred = null // finish
+            return
+        }
+
+        if (isFirstFetchNotifications) {
+            notificationInfoMap[key]!!.startId = getMaxID(records.data ?: ArrayList<AttendRecord>())
+            Log.d(TAG, "listenNotification isFirstFetchNotifications, startId set to ${notificationInfoMap[key]!!.startId}")
             return
         }
 
@@ -123,7 +129,9 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
                     doNotify(notification, notificationInfoMap[key]!!.temperatureUnit)
                 }
             }
-            notificationInfoMap[key]!!.startId = notificationInfoMap[key]!!.startId?.plus(records.data.size)
+
+            val maxID = getMaxID(records.data)
+            if (maxID >notificationInfoMap[key]!!.startId!!) notificationInfoMap[key]!!.startId = maxID
         }
     } catch (exception: IOException) {
         Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
@@ -133,6 +141,14 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
         Log.d(TAG, "listenNotification, $key Exception: "+ exception.message)
     }
     notificationInfoMap[key]?.deferred = null // finish
+}
+
+private fun App.getMaxID(notifications: List<AttendRecord>) : Int {
+    var value = 0
+    for (notification in notifications) {
+        if(notification.id > value) value = notification.id
+    }
+    return value
 }
 
 private fun App.createJsonRequestBody(vararg params: Pair<String, Int>): RequestBody {
