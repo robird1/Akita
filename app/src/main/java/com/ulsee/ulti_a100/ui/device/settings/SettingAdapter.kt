@@ -1,5 +1,6 @@
 package com.ulsee.ulti_a100.ui.device.settings
 
+import android.Manifest
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -63,6 +64,7 @@ private class AttributeInstance(position: Int, config: FaceUIConfig?) {
         SettingAttributes.POSITION_LIGHT_MODE -> LightMode(config)
         SettingAttributes.POSITION_CAPTURE -> Capture(config)
         SettingAttributes.POSITION_TIME -> Time(config)
+        SettingAttributes.POSITION_WIFI -> WiFi(config)
         SettingAttributes.POSITION_OTHERS -> Others(config)
         else -> Unknown(config)
     }
@@ -84,7 +86,7 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
     abstract fun onClick(fragment: Fragment, url: String)
 
     companion object {
-        const val ITEM_COUNT = 8
+        const val ITEM_COUNT = 9
         const val POSITION_VOLUME = 0
         const val POSITION_LANGUAGE = 1
         const val POSITION_TEMPERATURE = 2
@@ -92,10 +94,26 @@ abstract class SettingAttributes(val config: FaceUIConfig?) {
         const val POSITION_LIGHT_MODE = 4
         const val POSITION_CAPTURE = 5
         const val POSITION_TIME = 6
-        const val POSITION_OTHERS = 7
+        const val POSITION_WIFI = 7
+        const val POSITION_OTHERS = 8
     }
 }
 
+class WiFi(config: FaceUIConfig?): SettingAttributes(config) {
+    override fun setValue(itemView: View) {
+        super.setValue(itemView)
+        configName?.text = "Wireless Settings"
+        configValue?.text = ""
+    }
+
+    override fun onClick(fragment: Fragment, url: String) {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE)
+        fragment.requestPermissions(permissions, REQUEST_PERMISSION_WIFI)
+    }
+}
 
 class Volume(config: FaceUIConfig?): SettingAttributes(config) {
     override fun setValue(itemView: View) {

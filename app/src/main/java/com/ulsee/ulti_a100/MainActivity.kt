@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.volume_config -> hideBottomNav()
                 R.id.time_config -> hideBottomNav()
                 R.id.capture_config -> hideBottomNav()
+                R.id.wifi_config -> hideBottomNav()
                 else -> showBottomNav()
             }
 

@@ -1,5 +1,6 @@
 package com.ulsee.ulti_a100.ui.people
 
+import android.util.Log
 import com.ulsee.ulti_a100.api.ApiService
 import com.ulsee.ulti_a100.data.response.*
 import com.ulsee.ulti_a100.model.People
@@ -12,6 +13,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
+private val TAG = PeopleRepository::class.java.simpleName
 
 class PeopleRepository(private val url: String) {
 
@@ -59,7 +61,7 @@ class PeopleRepository(private val url: String) {
                     "\"phone\": \"${p.getPhone()}\",\r\n    \"email\": \"${p.getMail()}\",\r\n    \"address\": \"${p.getAddress()}\",\r\n    \"images\": [\r\n        " +
                     "{\r\n            \"data\": \"$imgBase64\"\r\n        }\r\n    ],\r\n    \"accessInfo\": {\r\n        \"cardNum\": \"\",\r\n        \"password\": \"\",\r\n        \"authType\": 0,\r\n        \"roleType\": 0\r\n    }\r\n}"
         }
-//        Log.d(TAG, "tmp: $tmp")
+        Log.d(TAG, "tmp: $tmp")
         return tmp.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 

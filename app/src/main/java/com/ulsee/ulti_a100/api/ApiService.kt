@@ -83,6 +83,11 @@ interface ApiService {
     @POST("api/v1/face/addFaces")
     suspend fun addFaces(@Body params: RequestBody): AddFaces
 
+    @POST("api/v1/face/getWifiConfig")
+    suspend fun getWifiConfig(): GetWifiConfig
+
+    @POST("api/v1/face/setWifiConfig")
+    suspend fun setWifiConfig(@Body params: RequestBody): SetWifiConfig
 
     companion object {
         fun create(baseUrl: String): ApiService {
