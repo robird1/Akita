@@ -57,13 +57,13 @@
                 android:id="@+id/checkBox_temperature_area"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Temperature Area" />
+                android:text="Show Heat Recognition Area" />
 
             <CheckBox
                 android:id="@+id/checkBox_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Body Temperature" />
+                android:text="Show Heat Recognition Result" />
         </LinearLayout>
     </ScrollView>
 
