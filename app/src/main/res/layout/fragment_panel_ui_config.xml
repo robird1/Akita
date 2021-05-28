@@ -57,25 +57,25 @@
                 android:id="@+id/checkBox_registration"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Number of Registration" />
+                android:text="Show Number of Registrations" />
 
             <CheckBox
                 android:id="@+id/checkBox_recognize_area"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Recognition Area" />
+                android:text="Show Face Recognition Area" />
 
             <CheckBox
                 android:id="@+id/checkBox_recognize_result"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Recognition Result" />
+                android:text="Show Face Recognition Result" />
 
             <CheckBox
                 android:id="@+id/checkBox_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Show Body Temperature" />
+                android:text="Show Heat Recognition Result" />
         </LinearLayout>
     </ScrollView>
 
