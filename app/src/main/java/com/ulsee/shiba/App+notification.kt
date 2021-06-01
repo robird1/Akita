@@ -186,6 +186,7 @@ private fun App.doNotify(notification: AttendRecord, tempUnit: String) {
             bundle.putString("temperature", getTransformedTemperature(it.bodyTemperature, tempUnit))
             intent.putExtra("bundle", bundle)
         }
+        notification.notificationContentText = notification.timestamp + " Abnormal temperature detected. (" + notification.name + getTransformedTemperature(notification.bodyTemperature, tempUnit) + ")"
         NotificationCenter.shared.show(mContext, intent, mContext.getString(R.string.title_alert_notification), notification)
     }
 }

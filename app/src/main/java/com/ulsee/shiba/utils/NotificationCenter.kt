@@ -72,7 +72,7 @@ class NotificationCenter {
     }
 
     private fun getContentText(notification: AttendRecord): String {
-        return notification.timestamp + " Abnormal temperature detected. (" + notification.name + notification.bodyTemperature + ")"
+        return notification.notificationContentText ?: notification.timestamp + " Abnormal temperature detected. (" + notification.name + notification.bodyTemperature + ")"
     }
 }
 
