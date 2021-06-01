@@ -38,5 +38,6 @@ data class AttendRecord(
     val phone: String,
     val respirator: Int,
     val timestamp: String,
-    val userid: String
+    val userid: String,
+    var notificationContentText: String?
 )
