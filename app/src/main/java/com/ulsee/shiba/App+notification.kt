@@ -137,7 +137,7 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
             }
 
             val maxID = getMaxID(records.data)
-            if (maxID >notificationInfoMap[key]!!.startId!!) notificationInfoMap[key]!!.startId = maxID+1
+            if (maxID >=notificationInfoMap[key]!!.startId!!) notificationInfoMap[key]!!.startId = maxID+1
         }
     } catch (exception: IOException) {
         Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
