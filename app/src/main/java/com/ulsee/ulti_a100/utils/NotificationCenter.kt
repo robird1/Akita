@@ -46,6 +46,8 @@ class NotificationCenter {
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
+                .setStyle(NotificationCompat.BigTextStyle()
+                    .bigText(getContentText(notification!!)))
 
 //        val bitImage = getImageIcon(notification)
 //        if (bitImage != null) {
