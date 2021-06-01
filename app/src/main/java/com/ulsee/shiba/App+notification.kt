@@ -130,14 +130,14 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
                 if (notificationInfoMap[key]!!.temperatureUnit == "F") temp = temp * 9 /5 + 32
 //                val isTempTooLow = temp < notificationInfoMap[key]!!.minTemp
                 val isTempTooHigh = temp > notificationInfoMap[key]!!.maxTemp
-                Log.d(TAG, "listenNotification $key, is temp too high = $isTempTooHigh, temp = $temp, temperatureUnit = ${notificationInfoMap[key]!!.temperatureUnit}, max = ${notificationInfoMap[key]!!.maxTemp} {notifiaction.timestamp}")
+                Log.d(TAG, "listenNotification $key, id(${notification.id}) is temp too high = $isTempTooHigh, temp = $temp, temperatureUnit = ${notificationInfoMap[key]!!.temperatureUnit}, max = ${notificationInfoMap[key]!!.maxTemp} {notifiaction.timestamp}")
                 if (isTempTooHigh) {
                     doNotify(notification, notificationInfoMap[key]!!.temperatureUnit)
                 }
             }
 
             val maxID = getMaxID(records.data)
-            if (maxID >notificationInfoMap[key]!!.startId!!) notificationInfoMap[key]!!.startId = maxID
+            if (maxID >notificationInfoMap[key]!!.startId!!) notificationInfoMap[key]!!.startId = maxID+1
         }
     } catch (exception: IOException) {
         Log.d(TAG, "listenNotification, $key IOException: "+ exception.message)
