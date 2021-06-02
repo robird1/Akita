@@ -98,6 +98,11 @@ private suspend fun App.listenDeviceNotification(device: Device, notificationInf
             notificationInfoMap[key]?.oldNotificationCount = response.totalCount
             Log.d(TAG, "listenNotification isFirstFetchNotifications,oldNotificationCount is ${response.totalCount}")
             notificationInfoMap[key]!!.startId = 0
+            // 2021/06/02 發現回傳的資料有endId，不需要從最一開始讀取資料
+            notificationInfoMap[key]!!.startId = response.endId
+            notificationInfoMap[key]!!.skippedNotificationCount = notificationInfoMap[key]!!.oldNotificationCount
+            notificationInfoMap[device.getIP()]?.deferred = null // finish
+            return
         }
 
         val startId = notificationInfoMap[key]!!.startId ?: 0
